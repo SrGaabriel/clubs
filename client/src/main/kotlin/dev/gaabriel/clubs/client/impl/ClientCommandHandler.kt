@@ -1,9 +1,8 @@
 package dev.gaabriel.clubs.client.impl
 
 import com.deck.core.event.message.DeckMessageCreateEvent
-import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.handler.CommandHandler
-import dev.gaabriel.clubs.common.struct.arguments.Argument
+import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.util.CommandCall
 import dev.gaabriel.clubs.common.util.FailedCommandExecutionException
 import dev.gaabriel.clubs.common.util.FailureHandler
@@ -30,13 +29,14 @@ public class ClientCommandHandler(public val failureHandler: FailureHandler<*>):
         }
     }
 
-    private fun parseArguments(context: ClientCommandContext, args: List<String>): List<Any> = buildList {
+    private fun parseArguments(context: ClientCommandContext, args: List<String>): List<Any> {
         val reader = StringReader(context, args.toMutableList())
         for (declarationArgument in context.command.arguments) {
             val text = declarationArgument[reader] ?: continue
             if (declarationArgument.type.literal)
                 reader.remove(text.toString().split(" ").size)
-            add(text)
+            reader.history.add(text)
         }
+        return reader.history
     }
 }

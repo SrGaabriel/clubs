@@ -14,9 +14,10 @@ public abstract class ClientArgumentType<T>(literal: Boolean): ArgumentType<T>(l
     public object User : ClientArgumentType<StatelessUser>(false) {
         override fun parse(reader: StringReader): StatelessUser? {
             val context = reader.context as ClientCommandContext
+            println(context.command.arguments.filter { it.type == User }.size)
             val mention = context.content.mentions
                 .filter { it.mentionType == RawMentionType.USER }
-                .getOrNull(context.command.arguments.filterIsInstance<User>().indexOf(this) + 1)
+                .getOrNull(reader.history.filterIsInstance<StatelessUser>().size)
                 ?: return null
             return StatelessUser(context.client, mention.id.content)
         }

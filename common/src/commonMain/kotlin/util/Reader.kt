@@ -7,6 +7,7 @@ public class StringReader(
     public val args: MutableList<String>
 ) {
     public val value: String get() = args.joinToString(" ")
+    public val history: MutableList<Any> = mutableListOf()
 
     public fun current(): String = args.first()
 

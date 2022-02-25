@@ -78,7 +78,7 @@ public abstract class ArgumentType<T>(
             override fun parse(reader: StringReader): String? {
                 val value = reader.value
                 if (!value.startsWith('"')) return null
-                return value.substring(1).substringBefore('"').also { println(it) }
+                return value.substring(1).substringBefore('"')
             }
         }
         public object Greedy: Text() {
