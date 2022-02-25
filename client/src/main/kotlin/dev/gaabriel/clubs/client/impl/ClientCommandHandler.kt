@@ -13,32 +13,30 @@ public class ClientCommandHandler(public val failureHandler: FailureHandler<*>):
     @Suppress("unchecked_cast")
     override suspend fun execute(command: CommandCall<*>, event: DeckMessageCreateEvent) {
         val declaration = command.command as Command<ClientCommandContext>; failureHandler as FailureHandler<ClientCommandContext>
-        val arguments = parseArguments(declaration.arguments, command.arguments)
         val context = ClientCommandContext(
             client = event.client,
             user = event.user,
             team = event.team,
             channel = event.channel,
-            arguments = arguments,
+            message = event.message,
+            command = declaration,
             rawArguments = command.arguments
         )
-        if (!declaration.requirements(context))
-            return
         try {
+            context._arguments = parseArguments(context, command.arguments)
             declaration.call(context)
         } catch (exception: FailedCommandExecutionException) {
             failureHandler.onFailure(context, exception.failure)
         }
     }
 
-    private fun parseArguments(declarationArguments: Collection<Argument<*, *>>, args: List<String>): List<Any> {
-        val arguments: MutableList<Any> = mutableListOf()
-        val reader = StringReader(args.toMutableList())
-        for (declarationArgument in declarationArguments) {
+    private fun parseArguments(context: ClientCommandContext, args: List<String>): List<Any> = buildList {
+        val reader = StringReader(context, args.toMutableList())
+        for (declarationArgument in context.command.arguments) {
             val text = declarationArgument[reader] ?: continue
-            reader.remove(text.toString().split(" ").size)
-            arguments.add(text)
+            if (declarationArgument.type.literal)
+                reader.remove(text.toString().split(" ").size)
+            add(text)
         }
-        return arguments
     }
 }

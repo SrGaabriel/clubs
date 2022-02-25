@@ -38,7 +38,7 @@ public interface Argument<S : CommandContext, T> {
         override val command: Command<S>,
     ): Argument<S, T> {
         override fun get(reader: StringReader): T {
-            if (reader.args.size == 0)
+            if (type.literal && reader.args.size == 0)
                 throw FailedCommandExecutionException(FailureType.UnprovidedArgument(this))
             return type.parse(reader) ?: throw FailedCommandExecutionException(FailureType.MismatchedArgumentType(this))
         }
@@ -47,7 +47,9 @@ public interface Argument<S : CommandContext, T> {
     public operator fun get(reader: StringReader): T?
 }
 
-public abstract class ArgumentType<T> {
+public abstract class ArgumentType<T>(
+    public val literal: Boolean = true
+) {
     public object Integer: ArgumentType<Int>() {
         override fun parse(reader: StringReader): Int? =
             reader.current().toIntOrNull()

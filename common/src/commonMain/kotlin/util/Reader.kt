@@ -1,6 +1,11 @@
 package dev.gaabriel.clubs.common.util
 
-public class StringReader(public val args: MutableList<String>) {
+import dev.gaabriel.clubs.common.struct.CommandContext
+
+public class StringReader(
+    public val context: CommandContext,
+    public val args: MutableList<String>
+) {
     public val value: String get() = args.joinToString(" ")
 
     public fun current(): String = args.first()

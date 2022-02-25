@@ -1,6 +1,7 @@
 package dev.gaabriel.clubs.common.struct
 
 import dev.gaabriel.clubs.common.struct.arguments.Argument
+import dev.gaabriel.clubs.common.util.ClubsInternalAPI
 import kotlin.jvm.JvmName
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -11,7 +12,8 @@ public data class Command<T : CommandContext>(val names: List<String>) {
 
     private var trigger: suspend T.() -> Unit = {}
     public var requirements: suspend T.() -> Boolean = {true}
-    private var currentContext: T? = null
+    @ClubsInternalAPI
+    public var currentContext: T? = null
 
     public val arguments: LinkedHashSet<Argument<T, *>> = linkedSetOf()
 
@@ -49,6 +51,6 @@ public data class Command<T : CommandContext>(val names: List<String>) {
     @Suppress("unchecked_cast")
     public operator fun <V> Argument.Optional<T, V>.provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, V?> =
         ReadOnlyProperty { _, _ ->
-            currentContext?.arguments?.getOrNull(arguments.indexOf(this)) as? V ?: error("")
+            currentContext?.arguments?.getOrNull(arguments.indexOf(this)) as V?
         }
 }

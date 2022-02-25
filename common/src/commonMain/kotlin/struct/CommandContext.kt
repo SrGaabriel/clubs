@@ -1,6 +1,7 @@
 package dev.gaabriel.clubs.common.struct
 
 public interface CommandContext {
+    public val command: Command<out CommandContext>
     public val arguments: List<Any>
     public val rawArguments: List<String>
 
