@@ -1,3 +1,3 @@
 rootProject.name = "clubs"
-include("common")
-include("client")
+include("clubs-common")
+include("clubs-client")

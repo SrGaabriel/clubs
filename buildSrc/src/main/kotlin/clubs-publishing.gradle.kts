@@ -7,7 +7,7 @@ tasks {
         publications {
             create<MavenPublication>("Clubs") {
                 groupId = "dev.gaabriel.clubs"
-                artifactId = "clubs-${project.name}"
+                artifactId = project.name
                 version = Dependencies.ProjectVersion
                 from(components["kotlin"])
 
