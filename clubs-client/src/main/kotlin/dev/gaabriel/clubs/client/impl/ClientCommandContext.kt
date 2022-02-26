@@ -35,4 +35,13 @@ public data class ClientCommandContext(
 
     public suspend fun sendContent(content: ContentBuilder.() -> Unit): Message =
         channel.sendContent(content)
+
+    override suspend fun reply(message: String): Message =
+        this.message.sendReply { content { + message } }
+
+    public suspend fun reply(builder: DeckMessageBuilder.() -> Unit): Message =
+        this.message.sendReply(builder)
+
+    public suspend fun replyContent(content: ContentBuilder.() -> Unit): Message =
+        this.message.sendReply { this.content(content) }
 }

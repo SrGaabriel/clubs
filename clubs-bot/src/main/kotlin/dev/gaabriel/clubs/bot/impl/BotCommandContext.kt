@@ -6,6 +6,7 @@ import com.deck.core.stateless.StatelessServer
 import com.deck.core.stateless.StatelessUser
 import com.deck.core.stateless.channel.StatelessMessageChannel
 import com.deck.core.util.sendMessage
+import com.deck.core.util.sendReply
 import com.deck.rest.builder.SendMessageRequestBuilder
 import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.struct.CommandContext
@@ -29,4 +30,10 @@ public data class BotCommandContext(
 
     public suspend fun send(builder: SendMessageRequestBuilder.() -> Unit): Message =
         channel.sendMessage(builder)
+
+    override suspend fun reply(message: String): Any =
+        this.message.sendReply(message)
+
+    public suspend fun reply(builder: SendMessageRequestBuilder.() -> Unit): Message =
+        this.message.sendReply(builder)
 }

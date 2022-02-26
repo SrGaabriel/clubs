@@ -6,4 +6,6 @@ public interface CommandContext {
     public val rawArguments: List<String>
 
     public suspend fun send(message: String): Any
+
+    public suspend fun reply(message: String): Any = send(message)
 }
