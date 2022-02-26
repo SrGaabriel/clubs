@@ -107,3 +107,7 @@ dependencies {
     implementation("com.github.srgaabriel.clubs:clubs-client:$clubsVersion")
 }
 ```
+
+## Thanks
+
+I got inspiration from [Hexalite](https://github.com/HexaliteNetwork/java-edition-network), a project I'm working on with [eexsty](https://github.com/eexsty/) and other amazing devs!
