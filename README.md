@@ -87,3 +87,23 @@ private fun HelloCommand() = command("hello") {
 The above example accepts user, role and channel mentions and sends a reply mentioning them again.
 
 If you want to get the channel's state (like name, topic etc...), just like with `deck`, you can use `channel.getState()` to fetch this data making a request to guilded's API.
+
+## Implementation
+
+To use `clubs` in your project, you only need to add this to your `build.gradle.kts`:
+
+```kotlin
+repositories {
+    maven("https://jitpack.io/")
+}
+```
+
+Here you can replace `clubsVersion` with the latest version (`0.3-SNAPSHOT`).
+
+And if you only want to use the `common` module, you can just replace `clubs-client` with `clubs-common`.
+
+```kotlin
+dependencies {
+    implementation("com.github.srgaabriel.clubs:clubs-client:$clubsVersion")
+}
+```

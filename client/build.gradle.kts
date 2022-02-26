@@ -10,7 +10,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(project(":common"))
+    api(project(":common"))
 
     implementation("com.github.SrGaabriel.deck:deck-core:${Dependencies.DeckVersion}")
 }
