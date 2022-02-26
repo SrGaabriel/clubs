@@ -1,9 +1,7 @@
 plugins {
     kotlin("multiplatform")
+    `clubs-publishing`
 }
-
-group = "dev.gaabriel.clubs"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -15,7 +13,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Dependencies.KotlinVersion}")
             }
             explicitApi()
         }

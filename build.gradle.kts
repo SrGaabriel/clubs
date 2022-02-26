@@ -1,10 +1,12 @@
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version Dependencies.KotlinVersion
+    `maven-publish`
 }
 
 subprojects {
     group = "dev.gaabriel.clubs"
-    version = "1.0-SNAPSHOT"
+    version = Dependencies.ProjectVersion
+    apply<MavenPublishPlugin>()
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
         kotlinOptions {
