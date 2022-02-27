@@ -98,7 +98,7 @@ repositories {
 }
 ```
 
-Here you can replace `clubsVersion` with the latest version (`0.6-SNAPSHOT`).
+Here you can replace `clubsVersion` with the latest version (`0.7-SNAPSHOT`).
 
 And if you only want to use the `common` module, you can just replace `clubs-client` with `clubs-common`.
 
