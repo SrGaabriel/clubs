@@ -31,7 +31,7 @@ public open class BotCommandContext(
     public suspend fun send(builder: SendMessageRequestBuilder.() -> Unit): Message =
         channel.sendMessage(builder)
 
-    override suspend fun reply(message: String): Any =
+    override suspend fun reply(message: String): Message =
         this.message.sendReply(message)
 
     public suspend fun reply(builder: SendMessageRequestBuilder.() -> Unit): Message =
