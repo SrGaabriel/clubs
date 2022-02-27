@@ -3,12 +3,15 @@ package dev.gaabriel.clubs.client.util
 import com.deck.core.DeckClient
 import com.deck.core.event.message.DeckMessageCreateEvent
 import dev.gaabriel.clubs.client.ClientClubsInstance
+import dev.gaabriel.clubs.client.impl.ClientCommandContext
 import dev.gaabriel.clubs.client.impl.ClientCommandHandler
 import dev.gaabriel.clubs.client.impl.ClientCommandListener
 import dev.gaabriel.clubs.client.text.MarkdownFailureHandler
 import dev.gaabriel.clubs.common.handler.CommandHandler
 import dev.gaabriel.clubs.common.handler.CommandListener
+import dev.gaabriel.clubs.common.parser.ArgumentParser
 import dev.gaabriel.clubs.common.parser.CommandParser
+import dev.gaabriel.clubs.common.parser.TextArgumentParser
 import dev.gaabriel.clubs.common.parser.TextCommandParser
 import dev.gaabriel.clubs.common.repository.CommandRepository
 import dev.gaabriel.clubs.common.repository.MapCommandRepository
@@ -22,13 +25,14 @@ public class ClientInstanceBuilder {
     public var listener: CommandListener<DeckClient>? = null
 
     public var failureHandler: FailureHandler<*> = MarkdownFailureHandler()
+    public var argumentParser: ArgumentParser<ClientCommandContext> = TextArgumentParser()
 
     public var parser: CommandParser? = null
     public var handler: CommandHandler<DeckMessageCreateEvent>? = null
 
     public fun build(): ClientClubsInstance =
         ClientClubsInstance(listener ?: ClientCommandListener(
-            handler = handler ?: ClientCommandHandler(failureHandler),
+            handler = handler ?: ClientCommandHandler(failureHandler, argumentParser),
             parser = parser ?: TextCommandParser(repository, prefix)
         ), repository)
 }

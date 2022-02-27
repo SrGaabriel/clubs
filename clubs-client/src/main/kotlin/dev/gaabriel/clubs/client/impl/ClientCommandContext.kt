@@ -13,12 +13,12 @@ import com.deck.core.util.sendMessage
 import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.struct.CommandContext
 
-public data class ClientCommandContext(
-    val client: DeckClient,
-    val user: StatelessUser,
-    val team: StatelessTeam?,
-    val channel: StatelessMessageChannel,
-    val message: Message,
+public open class ClientCommandContext(
+    public val client: DeckClient,
+    public val user: StatelessUser,
+    public val team: StatelessTeam?,
+    public val channel: StatelessMessageChannel,
+    public val message: Message,
     override val command: Command<ClientCommandContext>,
     override val rawArguments: List<String>
 ): CommandContext {

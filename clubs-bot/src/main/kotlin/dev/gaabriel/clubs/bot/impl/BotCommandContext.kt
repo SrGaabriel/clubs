@@ -11,12 +11,12 @@ import com.deck.rest.builder.SendMessageRequestBuilder
 import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.struct.CommandContext
 
-public data class BotCommandContext(
-    val client: DeckClient,
-    val user: StatelessUser,
-    val server: StatelessServer?,
-    val channel: StatelessMessageChannel,
-    val message: Message,
+public open class BotCommandContext(
+    public val client: DeckClient,
+    public val user: StatelessUser,
+    public val server: StatelessServer?,
+    public val channel: StatelessMessageChannel,
+    public val message: Message,
     override val command: Command<BotCommandContext>,
     override val rawArguments: List<String>
 ): CommandContext {
