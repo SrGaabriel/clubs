@@ -2,9 +2,11 @@ package dev.gaabriel.clubs.bot.impl
 
 import com.deck.core.DeckClient
 import com.deck.core.entity.Message
+import com.deck.core.stateless.StatelessMember
 import com.deck.core.stateless.StatelessServer
 import com.deck.core.stateless.StatelessUser
 import com.deck.core.stateless.channel.StatelessMessageChannel
+import com.deck.core.util.StatelessMember
 import com.deck.core.util.sendMessage
 import com.deck.core.util.sendReply
 import com.deck.rest.builder.SendMessageRequestBuilder
@@ -24,6 +26,7 @@ public open class BotCommandContext(
     override val arguments: List<Any> get() = _arguments
 
     public val content: String get() = message.content
+    public val member: StatelessMember? by lazy { server?.let { StatelessMember(client, user.id, it) } }
 
     override suspend fun send(message: String): Message =
         channel.sendMessage(message)

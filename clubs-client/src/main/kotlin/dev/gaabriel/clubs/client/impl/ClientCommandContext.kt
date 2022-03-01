@@ -5,9 +5,11 @@ import com.deck.common.content.ContentBuilder
 import com.deck.core.DeckClient
 import com.deck.core.builder.DeckMessageBuilder
 import com.deck.core.entity.Message
+import com.deck.core.stateless.StatelessMember
 import com.deck.core.stateless.StatelessTeam
 import com.deck.core.stateless.StatelessUser
 import com.deck.core.stateless.channel.StatelessMessageChannel
+import com.deck.core.util.StatelessMember
 import com.deck.core.util.sendContent
 import com.deck.core.util.sendMessage
 import dev.gaabriel.clubs.common.struct.Command
@@ -26,6 +28,7 @@ public open class ClientCommandContext(
     override val arguments: List<Any> get() = _arguments
 
     public val content: Content get() = message.content
+    public val member: StatelessMember? by lazy { team?.let { StatelessMember(client, user.id, it) } }
 
     override suspend fun send(message: String): Message =
         channel.sendMessage(message)

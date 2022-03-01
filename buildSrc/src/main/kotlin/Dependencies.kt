@@ -3,5 +3,5 @@ object Dependencies {
     const val KotlinVersion = "1.6.0"
 
     const val DeckVersion = "0.0.4-BETA"
-    const val DeckBotVersion = "0.0.2-BOT"
+    const val DeckBotVersion = "0.0.4-BOT"
 }
