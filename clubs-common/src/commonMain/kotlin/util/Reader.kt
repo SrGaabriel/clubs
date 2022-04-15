@@ -9,7 +9,7 @@ public class StringReader(
     public val value: String get() = args.joinToString(" ")
     public val history: MutableList<Any> = mutableListOf()
 
-    public fun current(): String = args.first()
+    public fun current(): String? = args.firstOrNull()
 
     public fun remove(value: Int) {
         args.removeAll(args.take(value))

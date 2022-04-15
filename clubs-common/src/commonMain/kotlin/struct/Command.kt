@@ -45,12 +45,12 @@ public data class Command<T : CommandContext>(val names: List<String>) {
     @Suppress("unchecked_cast")
     public operator fun <V> Argument.Required<T, V>.provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, V> =
         ReadOnlyProperty { _, _ ->
-            currentContext?.arguments?.getOrNull(arguments.indexOf(this)) as? V ?: error("")
+            currentContext?.arguments?.getOrNull(arguments.indexOf(this)) as V
         }
 
     @Suppress("unchecked_cast")
     public operator fun <V> Argument.Optional<T, V>.provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, V?> =
         ReadOnlyProperty { _, _ ->
-            currentContext?.arguments?.getOrNull(arguments.indexOf(this)) as V?
+            (currentContext?.arguments?.getOrNull(arguments.indexOf(this)) ?: return@ReadOnlyProperty null) as V?
         }
 }
