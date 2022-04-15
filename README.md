@@ -4,13 +4,13 @@
 
 # ♣️ clubs
 
-A simple and versatile command framework made with the primary objective of making `Guilded` command experience a little more elegant.
+A simple and versatile command framework to improve command experience in `Guilded` in an elegant way.
 
-The default implementation of the `common` module is the `client`, which uses [deck](https://github.com/SrGaabriel/deck) to communicate with Guilded's API.
+The default implementation of the `common` module is the `bot` one, which uses [deck](https://github.com/SrGaabriel/deck/) to communicate with Guilded's Bot API.
 
 ## Documentation
 
-There is no official documentation, but you can find a nice example of the structure here:
+There's no official documentation, but you can find some examples below.
 
 #### common
 
@@ -19,7 +19,7 @@ This is module containing the main functionalities of the framework, being less 
 ```kotlin
 val command = newCommand("repeat", "repeattask") {
     // Integer type
-    val times by integer("times")
+    val times by integer("times").required()
     // Nullable string type, only accepts a word
     val exampleWord by word("word").optional()
     // Nullable string type, only accepts text between quotes ("")
@@ -36,7 +36,7 @@ val command = newCommand("repeat", "repeattask") {
     }
     // Subcommand
     command("massive") {
-        val times by long("times")
+        val times by long("times").required()
         runs {
             repeat(times) { count ->
                  send("Count: $count")
@@ -48,23 +48,33 @@ val command = newCommand("repeat", "repeattask") {
 
 You can't use this module alone, since it does not have a command handler, in other words, it doesn't have a bridge to send and receive content from, so it can't reply nor parse commands.
 
-#### client
+#### bot
 
-This is the framework's guilded client API implementation, supporting more data types and structures, take a look at the example:
+This module is the implementation of clubs to the official Guilded Bot API. You must be in the early access program to be able to use this properly. Usage:
 
 ```kotlin
-suspend fun main() {
-    val deck = DeckClient {}
-    val clubs: ClubsInstance = ClientClubsInstance()
-    clubs.register(HelloCommand())
-    deck.login()
-    clubs.start(deck)
+val command = command("repeat") {
+    val times by integer("times").required()
+    val message by quote("message").optional()
+    runs {
+        repeat(times) {
+            channel.sendMessage(message ?: "Message was not specified.")
+        }
+    }
 }
+```
 
-private fun HelloCommand() = command("hello") {
-    val user by user("user")
-    val role by role("role")
-    val channel by channel("channel")
+Unfortunately, this module doesn't support specific-platform types, such as `channels`, `users` or `roles`. Because of the early stage of the bot API, these entities can't be parsed as arguments yet.
+
+#### client
+
+This module is deprecated and probably won't be receiving new features. Please refer to the [bot](https://github.com/SrGaabriel/clubs#client) module. Anyway, here is an example:
+
+```kotlin
+val command = command("hello") {
+    val user by user("user").required()
+    val role by role("role").required()
+    val channel by channel("channel").required()
     runs {
         this.channel.sendContent {
             paragraph {
@@ -98,9 +108,7 @@ repositories {
 }
 ```
 
-Here you can replace `clubsVersion` with the latest version (`0.6-SNAPSHOT`).
-
-And if you only want to use the `common` module, you can just replace `clubs-client` with `clubs-common`.
+Then in your dependencies:
 
 ```kotlin
 dependencies {
@@ -108,6 +116,10 @@ dependencies {
 }
 ```
 
+Here you can replace `clubsVersion` with the latest version (`0.6-SNAPSHOT`).
+
+And if you only want to use the `common` module, you can just replace `clubs-client` with `clubs-common`.
+
 ## Thanks
 
-I got inspiration from [Hexalite](https://github.com/HexaliteNetwork/java-edition-network), a project I'm working on with [eexsty](https://github.com/eexsty/) and other amazing devs!
+I got inspiration from [Hexalite](https://github.com/HexaliteNetwork/java-edition-network), a project I'm working on with [eexsty](https://github.com/eexsty/) and some other amazing devs!
