@@ -12,14 +12,14 @@ import com.deck.core.util.StatelessRole
 import com.deck.core.util.StatelessUser
 import dev.gaabriel.clubs.client.impl.ClientCommandContext
 import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.arguments.Argument
+import dev.gaabriel.clubs.common.struct.arguments.ArgumentBuilder
 import dev.gaabriel.clubs.common.struct.arguments.ArgumentType
 import dev.gaabriel.clubs.common.struct.arguments.createArgument
 import dev.gaabriel.clubs.common.util.StringReader
 import kotlinx.serialization.json.int
 
-public abstract class ClientArgumentType<T>(literal: Boolean): ArgumentType<T>(literal) {
-    public object User : ClientArgumentType<StatelessUser>(false) {
+public abstract class ClientArgumentType<T>(name: String, literal: Boolean): ArgumentType<T>(name = name, literal = literal) {
+    public object User : ClientArgumentType<StatelessUser>("User", false) {
         override fun parse(reader: StringReader): StatelessUser? {
             val context = reader.context as ClientCommandContext
             val mention = context.content.mentions
@@ -29,7 +29,7 @@ public abstract class ClientArgumentType<T>(literal: Boolean): ArgumentType<T>(l
             return StatelessUser(context.client, mention.id.content)
         }
     }
-    public object Role : ClientArgumentType<StatelessRole>(false) {
+    public object Role : ClientArgumentType<StatelessRole>("Role", false) {
         override fun parse(reader: StringReader): StatelessRole? {
             val context = reader.context as ClientCommandContext
             val mention = context.content.mentions
@@ -39,7 +39,7 @@ public abstract class ClientArgumentType<T>(literal: Boolean): ArgumentType<T>(l
             return StatelessRole(context.client, mention.id.int, context.team!!)
         }
     }
-    public object Channel : ClientArgumentType<GenericStatelessChannel>(false) {
+    public object Channel : ClientArgumentType<GenericStatelessChannel>("Channel",false) {
         @OptIn(DeckObsoleteApi::class)
         override fun parse(reader: StringReader): GenericStatelessChannel? {
             val context = reader.context as ClientCommandContext
@@ -53,11 +53,11 @@ public abstract class ClientArgumentType<T>(literal: Boolean): ArgumentType<T>(l
     }
 }
 
-public fun Command<ClientCommandContext>.user(name: String): Argument.Required<ClientCommandContext, StatelessUser> =
+public fun Command<ClientCommandContext>.user(name: String): ArgumentBuilder<ClientCommandContext, StatelessUser> =
     createArgument(name, ClientArgumentType.User)
 
-public fun Command<ClientCommandContext>.role(name: String): Argument.Required<ClientCommandContext, StatelessRole> =
+public fun Command<ClientCommandContext>.role(name: String): ArgumentBuilder<ClientCommandContext, StatelessRole> =
     createArgument(name, ClientArgumentType.Role)
 
-public fun Command<ClientCommandContext>.channel(name: String): Argument.Required<ClientCommandContext, GenericStatelessChannel> =
+public fun Command<ClientCommandContext>.channel(name: String): ArgumentBuilder<ClientCommandContext, GenericStatelessChannel> =
     createArgument(name, ClientArgumentType.Channel)

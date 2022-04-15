@@ -4,31 +4,30 @@ import com.deck.common.content.Content
 import com.deck.common.content.contentBuilder
 import dev.gaabriel.clubs.client.impl.ClientCommandContext
 import dev.gaabriel.clubs.common.util.FailureHandler
-import dev.gaabriel.clubs.common.util.FailureType
+import dev.gaabriel.clubs.common.util.CommandFailure
 
 public class MarkdownFailureHandler: FailureHandler<ClientCommandContext> {
-    override suspend fun onFailure(context: ClientCommandContext, type: FailureType) {
-        val content: Content = when (type) {
-            is FailureType.UnprovidedArgument -> contentBuilder {
+    override suspend fun onFailure(context: ClientCommandContext, failure: CommandFailure) {
+        val content: Content = when (failure) {
+            is CommandFailure.UnprovidedArgument -> contentBuilder {
                 paragraph {
                     + "The required argument "
-                    + type.argument.name.inlineCode()
+                    + failure.argument.name.inlineCode()
+                    + "(${failure.argument.type.name})".bold()
                     + " was not specified."
                 }
             }
-            is FailureType.MismatchedArgumentType -> contentBuilder {
+            is CommandFailure.MismatchedArgumentType -> contentBuilder {
                 paragraph {
                     + "The "
-                    + type.argument.name.inlineCode()
+                    + failure.argument.name.inlineCode()
                     + " argument only accepts "
-                    + (type.argument.type::class.simpleName ?: "Invalid").inlineCode()
-                    + " types."
+                    + failure.argument.type.name.lowercase()
+                    + "s types."
                 }
             }
             else -> contentBuilder {
-                paragraph {
-                    + "There was an error while trying to execute this command."
-                }
+                + "There was an error while trying to execute this command."
             }
         }
         context.send {

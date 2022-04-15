@@ -3,7 +3,7 @@ package dev.gaabriel.clubs.common.struct.arguments
 import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.struct.CommandContext
 import dev.gaabriel.clubs.common.util.FailedCommandExecutionException
-import dev.gaabriel.clubs.common.util.FailureType
+import dev.gaabriel.clubs.common.util.CommandFailure
 import dev.gaabriel.clubs.common.util.StringReader
 
 public data class ArgumentBuilder<S : CommandContext, T : Any?> internal constructor(
@@ -30,7 +30,7 @@ public interface Argument<S : CommandContext, T> {
         override fun get(reader: StringReader): T? {
             if (type.literal && reader.args.isEmpty())
                 return null
-            return type.parse(reader) ?: throw FailedCommandExecutionException(FailureType.MismatchedArgumentType(this))
+            return type.parse(reader) ?: throw FailedCommandExecutionException(CommandFailure.MismatchedArgumentType(this))
         }
     }
 
@@ -41,8 +41,8 @@ public interface Argument<S : CommandContext, T> {
     ): Argument<S, T> {
         override fun get(reader: StringReader): T {
             if (type.literal && reader.args.size == 0)
-                throw FailedCommandExecutionException(FailureType.UnprovidedArgument(this))
-            return type.parse(reader) ?: throw FailedCommandExecutionException(FailureType.MismatchedArgumentType(this))
+                throw FailedCommandExecutionException(CommandFailure.UnprovidedArgument(this))
+            return type.parse(reader) ?: throw FailedCommandExecutionException(CommandFailure.MismatchedArgumentType(this))
         }
     }
 
@@ -50,41 +50,47 @@ public interface Argument<S : CommandContext, T> {
 }
 
 public abstract class ArgumentType<T>(
+    public val name: String,
     public val literal: Boolean = true,
     public val mustComeLast: Boolean = false
 ) {
-    public object Integer: ArgumentType<Int>() {
+    public object Integer: ArgumentType<Int>("32 bits integer") {
         override fun parse(reader: StringReader): Int? =
             reader.current()?.toIntOrNull()
     }
 
-    public object Double: ArgumentType<kotlin.Double>() {
+    public object Double: ArgumentType<kotlin.Double>("64 bits floating points") {
         override fun parse(reader: StringReader): kotlin.Double? =
             reader.current()?.toDoubleOrNull()
     }
 
-    public object Short: ArgumentType<kotlin.Short>() {
+    public object Short: ArgumentType<kotlin.Short>("16 bits integer") {
         override fun parse(reader: StringReader): kotlin.Short? =
             reader.current()?.toShortOrNull()
     }
 
-    public object Long: ArgumentType<kotlin.Long>() {
+    public object Long: ArgumentType<kotlin.Long>("64 bits integer") {
         override fun parse(reader: StringReader): kotlin.Long? =
             reader.current()?.toLongOrNull()
     }
 
-    public sealed class Text(literal: Boolean = true, mustComeLast: Boolean = false): ArgumentType<String>(literal, mustComeLast) {
-        public object Word: Text() {
+    public object Float: ArgumentType<kotlin.Long>("32 bits floating point") {
+        override fun parse(reader: StringReader): kotlin.Long? =
+            reader.current()?.toLongOrNull()
+    }
+
+    public sealed class Text(name: String, literal: Boolean = true, mustComeLast: Boolean = false): ArgumentType<String>(name, literal, mustComeLast) {
+        public object Word: Text("Word") {
             override fun parse(reader: StringReader): String? = reader.current()
         }
-        public object Quote: Text() {
+        public object Quote: Text("Quote") {
             override fun parse(reader: StringReader): String? {
                 val value = reader.value
                 if (!value.startsWith('"')) return null
                 return value.substring(1).substringBefore('"')
             }
         }
-        public object Greedy: Text(mustComeLast = true) {
+        public object Greedy: Text("Text", mustComeLast = true) {
             override fun parse(reader: StringReader): String? = reader.value.ifBlank { null }
         }
     }

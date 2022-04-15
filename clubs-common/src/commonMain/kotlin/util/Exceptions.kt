@@ -1,3 +1,3 @@
 package dev.gaabriel.clubs.common.util
 
-public class FailedCommandExecutionException(public val failure: FailureType): RuntimeException()
+public class FailedCommandExecutionException(public val failure: CommandFailure): RuntimeException()
