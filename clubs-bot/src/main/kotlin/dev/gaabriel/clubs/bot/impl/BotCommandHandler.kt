@@ -1,6 +1,6 @@
 package dev.gaabriel.clubs.bot.impl
 
-import com.deck.core.event.message.DeckMessageCreateEvent
+import io.github.deck.core.event.message.DeckMessageCreateEvent
 import dev.gaabriel.clubs.common.handler.CommandHandler
 import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.util.CommandCall
@@ -14,9 +14,9 @@ public class BotCommandHandler(public val failureHandler: FailureHandler<*>): Co
         val declaration = command.command as Command<BotCommandContext>; failureHandler as FailureHandler<BotCommandContext>
         val context = BotCommandContext(
             client = event.client,
-            user = event.author,
-            server = event.server,
-            channel = event.channel,
+            userId = event.authorId,
+            serverId = event.serverId,
+            channelId = event.channelId,
             message = event.message,
             command = declaration,
             rawArguments = command.arguments

@@ -1,6 +1,6 @@
 package dev.gaabriel.clubs.bot
 
-import com.deck.core.DeckClient
+import io.github.deck.core.DeckClient
 import dev.gaabriel.clubs.bot.util.BotInstanceBuilder
 import dev.gaabriel.clubs.common.ClubsInstance
 import dev.gaabriel.clubs.common.handler.CommandListener

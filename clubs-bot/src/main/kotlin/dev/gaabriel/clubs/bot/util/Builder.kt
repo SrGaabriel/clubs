@@ -1,7 +1,7 @@
 package dev.gaabriel.clubs.bot.util
 
-import com.deck.core.DeckClient
-import com.deck.core.event.message.DeckMessageCreateEvent
+import io.github.deck.core.DeckClient
+import io.github.deck.core.event.message.DeckMessageCreateEvent
 import dev.gaabriel.clubs.bot.BotClubsInstance
 import dev.gaabriel.clubs.bot.impl.BotCommandHandler
 import dev.gaabriel.clubs.bot.impl.BotCommandListener
