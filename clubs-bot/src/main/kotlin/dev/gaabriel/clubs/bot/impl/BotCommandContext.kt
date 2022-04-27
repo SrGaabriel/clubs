@@ -8,12 +8,15 @@ import io.github.deck.core.stateless.channel.StatelessMessageChannel
 import io.github.deck.rest.builder.SendMessageRequestBuilder
 import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.struct.CommandContext
+import io.github.deck.common.EmbedBuilder
 import io.github.deck.common.util.GenericId
+import io.github.deck.core.event.message.DeckMessageCreateEvent
 import io.github.deck.core.util.*
 import java.util.UUID
 
 public data class BotCommandContext(
     val client: DeckClient,
+    val event: DeckMessageCreateEvent,
     val userId: GenericId,
     val serverId: GenericId?,
     val channelId: UUID,
@@ -36,9 +39,15 @@ public data class BotCommandContext(
     public suspend fun send(builder: SendMessageRequestBuilder.() -> Unit): Message =
         channel.sendMessage(builder)
 
+    public suspend fun sendEmbed(content: String? = null, embed: EmbedBuilder.() -> Unit): Message =
+        channel.sendEmbed(content, embed)
+
     override suspend fun reply(message: String): Any =
         this.message.sendReply(message)
 
     public suspend fun reply(builder: SendMessageRequestBuilder.() -> Unit): Message =
         this.message.sendReply(builder)
+
+    public suspend fun replyEmbed(content: String? = null, embed: EmbedBuilder.() -> Unit): Message =
+        this.message.replyWithEmbed(content, embed)
 }

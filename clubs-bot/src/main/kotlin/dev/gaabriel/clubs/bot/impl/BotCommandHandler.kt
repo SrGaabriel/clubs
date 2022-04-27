@@ -14,6 +14,7 @@ public class BotCommandHandler(public val failureHandler: FailureHandler<*>): Co
         val declaration = command.command as Command<BotCommandContext>; failureHandler as FailureHandler<BotCommandContext>
         val context = BotCommandContext(
             client = event.client,
+            event = event,
             userId = event.authorId,
             serverId = event.serverId,
             channelId = event.channelId,

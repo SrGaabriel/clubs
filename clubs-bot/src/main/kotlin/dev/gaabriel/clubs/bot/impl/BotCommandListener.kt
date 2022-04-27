@@ -1,6 +1,5 @@
 package dev.gaabriel.clubs.bot.impl
 
-import io.github.deck.common.util.DeckExperimental
 import io.github.deck.core.DeckClient
 import io.github.deck.core.event.message.DeckMessageCreateEvent
 import io.github.deck.core.util.on
@@ -13,7 +12,6 @@ public class BotCommandListener(
     public val handler: CommandHandler<DeckMessageCreateEvent>,
     public val parser: CommandParser
 ): CommandListener<DeckClient> {
-    @OptIn(DeckExperimental::class)
     override suspend fun start(client: DeckClient): Job = client.on<DeckMessageCreateEvent> {
         val command = parser.parseString(message.content) ?: return@on
         handler.execute(command, this)
