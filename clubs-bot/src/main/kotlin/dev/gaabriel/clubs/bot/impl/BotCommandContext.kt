@@ -7,7 +7,9 @@ import io.github.deck.core.stateless.StatelessUser
 import io.github.deck.core.stateless.channel.StatelessMessageChannel
 import io.github.deck.rest.builder.SendMessageRequestBuilder
 import dev.gaabriel.clubs.common.struct.Command
+import dev.gaabriel.clubs.common.struct.CommandArgumentNode
 import dev.gaabriel.clubs.common.struct.CommandContext
+import dev.gaabriel.clubs.common.struct.CommandNode
 import io.github.deck.common.EmbedBuilder
 import io.github.deck.common.util.GenericId
 import io.github.deck.core.event.message.DeckMessageCreateEvent
@@ -22,14 +24,13 @@ public data class BotCommandContext(
     val channelId: UUID,
     val message: Message,
     override val command: Command<BotCommandContext>,
+    override val node: CommandNode<BotCommandContext>,
+    override val arguments: Map<CommandArgumentNode<BotCommandContext, *>, Any>,
     override val rawArguments: List<String>
-): CommandContext {
+): CommandContext<BotCommandContext> {
     val user: StatelessUser by lazy { StatelessUser(client, userId) }
     val server: StatelessServer? by lazy { serverId?.let { StatelessServer(client, it) } }
     val channel: StatelessMessageChannel by lazy { StatelessMessageChannel(client, channelId, serverId) }
-
-    internal var _arguments: List<Any> = listOf()
-    override val arguments: List<Any> get() = _arguments
 
     public val content: String get() = message.content
 

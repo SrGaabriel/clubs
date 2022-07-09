@@ -1,7 +1,9 @@
 package dev.gaabriel.clubs.common.parser
 
-import dev.gaabriel.clubs.common.util.CommandCall
+import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
 
 public interface CommandParser {
-    public fun parseString(string: String): CommandCall<*>?
+    public val dictionary: ClubsDictionary
+
+    public fun parse(string: String): CommandCall?
 }

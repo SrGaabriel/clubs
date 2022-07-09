@@ -1,14 +1,14 @@
 package dev.gaabriel.clubs.common
 
-import dev.gaabriel.clubs.common.handler.CommandListener
-import dev.gaabriel.clubs.common.repository.CommandRepository
 import dev.gaabriel.clubs.common.struct.Command
+import dev.gaabriel.clubs.common.struct.CommandContext
 
-public interface ClubsInstance<C : Any> {
-    public var listener: CommandListener<C>
-    public var repository: CommandRepository
+public interface ClubsInstance<C : Any, S : CommandContext<S>> {
+    public fun start(client: C)
 
-    public suspend fun start(client: C)
+    public fun register(command: Command<S>)
 
-    public suspend fun register(command: Command<*>)
+    public companion object {
+        public const val DEFAULT_PREFIX: String = "!"
+    }
 }
