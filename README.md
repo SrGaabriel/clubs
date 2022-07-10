@@ -76,10 +76,10 @@ Then in your dependencies:
 
 ```kotlin
 dependencies {
-    implementation("com.github.srgaabriel.clubs:clubs-bot:$clubsVersion")
+    implementation("com.github.SrGaabriel.clubs:clubs-bot:$clubsVersion")
 }
 ```
 
-Here you can replace `clubsVersion` with the latest version (`0.6-SNAPSHOT`).
+Here you can replace `clubsVersion` with the latest version (`1.0`).
 
 If you only wish to use the `common` module, you can just replace `clubs-bot` with `clubs-common`.

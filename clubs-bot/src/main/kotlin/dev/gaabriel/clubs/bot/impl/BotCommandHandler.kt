@@ -1,15 +1,15 @@
 package dev.gaabriel.clubs.bot.impl
 
-import io.github.deck.core.event.message.DeckMessageCreateEvent
 import dev.gaabriel.clubs.common.parser.CommandCall
 import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.struct.CommandArgumentNode
 import dev.gaabriel.clubs.common.struct.CommandNode
+import io.github.deck.core.event.message.MessageCreateEvent
 import io.github.deck.core.util.sendMessage
 
 public class BotCommandHandler {
     @Suppress("unchecked_cast")
-    public suspend fun execute(call: CommandCall, event: DeckMessageCreateEvent) {
+    public suspend fun execute(call: CommandCall, event: MessageCreateEvent) {
         val root = call.root as Command<BotCommandContext>
         val declaration = call.node as CommandNode<BotCommandContext>
         val context = BotCommandContext(

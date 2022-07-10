@@ -12,13 +12,13 @@ import dev.gaabriel.clubs.common.struct.CommandContext
 import dev.gaabriel.clubs.common.struct.CommandNode
 import io.github.deck.common.EmbedBuilder
 import io.github.deck.common.util.GenericId
-import io.github.deck.core.event.message.DeckMessageCreateEvent
+import io.github.deck.core.event.message.MessageCreateEvent
 import io.github.deck.core.util.*
 import java.util.UUID
 
 public data class BotCommandContext(
     val client: DeckClient,
-    val event: DeckMessageCreateEvent,
+    val event: MessageCreateEvent,
     val userId: GenericId,
     val serverId: GenericId?,
     val channelId: UUID,
@@ -50,5 +50,5 @@ public data class BotCommandContext(
         this.message.sendReply(builder)
 
     public suspend fun replyEmbed(content: String? = null, embed: EmbedBuilder.() -> Unit): Message =
-        this.message.replyWithEmbed(content, embed)
+        this.message.sendReplyWithEmbed(content, embed)
 }
