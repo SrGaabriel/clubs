@@ -1,17 +1,17 @@
 package dev.gaabriel.clubs.bot.impl
 
-import io.github.deck.core.event.message.DeckMessageCreateEvent
-import dev.gaabriel.clubs.common.handler.CommandHandler
+import dev.gaabriel.clubs.common.parser.CommandCall
 import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.util.CommandCall
-import dev.gaabriel.clubs.common.util.FailedCommandExecutionException
-import dev.gaabriel.clubs.common.util.FailureHandler
-import dev.gaabriel.clubs.common.util.StringReader
+import dev.gaabriel.clubs.common.struct.CommandArgumentNode
+import dev.gaabriel.clubs.common.struct.CommandNode
+import io.github.deck.core.event.message.MessageCreateEvent
+import io.github.deck.core.util.sendMessage
 
-public class BotCommandHandler(public val failureHandler: FailureHandler<*>): CommandHandler<DeckMessageCreateEvent> {
+public class BotCommandHandler {
     @Suppress("unchecked_cast")
-    override suspend fun execute(command: CommandCall<*>, event: DeckMessageCreateEvent) {
-        val declaration = command.command as Command<BotCommandContext>; failureHandler as FailureHandler<BotCommandContext>
+    public suspend fun execute(call: CommandCall, event: MessageCreateEvent) {
+        val root = call.root as Command<BotCommandContext>
+        val declaration = call.node as CommandNode<BotCommandContext>
         val context = BotCommandContext(
             client = event.client,
             event = event,
@@ -19,24 +19,15 @@ public class BotCommandHandler(public val failureHandler: FailureHandler<*>): Co
             serverId = event.serverId,
             channelId = event.channelId,
             message = event.message,
-            command = declaration,
-            rawArguments = command.arguments
+            command = call.root as Command<BotCommandContext>,
+            node = call.node as CommandNode<BotCommandContext>,
+            arguments = call.arguments as Map<CommandArgumentNode<BotCommandContext, *>, Any>,
+            rawArguments = call.rawArguments
         )
-        try {
-            context._arguments = parseArguments(context, command.arguments)
-            declaration.call(context)
-        } catch (exception: FailedCommandExecutionException) {
-            failureHandler.onFailure(context, exception.failure)
+        if (declaration.executor == null) {
+            root.usage?.let { context.channel.sendMessage(it(context)) }
+            return
         }
-    }
-
-    private fun parseArguments(context: BotCommandContext, args: List<String>): List<Any> {
-        val reader = StringReader(context, args.toMutableList())
-        for (declarationArgument in context.command.arguments) {
-            val text = declarationArgument[reader] ?: continue
-            reader.remove(text.toString().split(" ").size)
-            reader.history.add(text)
-        }
-        return reader.history
+        declaration.executor!!(context)
     }
 }

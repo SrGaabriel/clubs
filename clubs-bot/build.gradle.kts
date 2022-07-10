@@ -12,5 +12,5 @@ dependencies {
     implementation(kotlin("stdlib"))
     api(project(":clubs-common"))
 
-    implementation("com.github.SrGaabriel.deck:bot-deck-core:${Dependencies.DeckBotVersion}")
+    implementation("com.github.SrGaabriel.deck:deck-core:${Dependencies.DeckVersion}")
 }

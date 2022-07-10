@@ -5,7 +5,7 @@ import dev.gaabriel.clubs.common.struct.Command
 public interface CommandRepository {
     public fun register(command: Command<*>)
 
-    public fun retrieve(name: String): Command<*>?
+    public fun search(name: String): Command<*>?
 
-    public fun delete(name: String)
+    public fun exclude(command: Command<*>)
 }
