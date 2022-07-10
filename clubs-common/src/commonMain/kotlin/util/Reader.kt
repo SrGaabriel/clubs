@@ -1,6 +1,6 @@
 package dev.gaabriel.clubs.common.util
 
-public class StringReader(public val content: List<String>) {
+public data class StringReader(public val content: List<String>) {
     public var index: Int = 0
 
     public fun isLast(): Boolean = index + 1 >= content.size
@@ -113,5 +113,56 @@ public class StringReader(public val content: List<String>) {
         return result.takeIf { found }?.joinToString(" ")
     }
 
-    public fun clone(): StringReader = StringReader(ArrayList(content)).also { it.index = index }
+    public fun peekUntil(scope: (String) -> Boolean): String = buildList {
+        val saveIndex = index
+        while (!isEnd() && !scope(peek())) {
+            add(next())
+        }
+        index = saveIndex
+    }.joinToString(" ")
+
+    public fun peekUntilOrNull(scope: (String) -> Boolean): String? {
+        var found = false
+        val saveIndex = index
+        val result = buildList {
+            while (!isEnd()) {
+                if (!scope(peek())) {
+                    found = true
+                    break
+                }
+                add(next())
+            }
+        }
+        index = saveIndex
+        return result.takeIf { found }?.joinToString(" ")
+    }
+
+    public fun peekUntilInclusive(scope: (String) -> Boolean): String = buildList {
+        val saveIndex = index
+        while (!isEnd()) {
+            if (!scope(peek())) {
+                add(next())
+                break
+            }
+            add(next())
+        }
+        index = saveIndex
+    }.joinToString(" ")
+
+    public fun peekUntilInclusiveOrNull(scope: (String) -> Boolean): String? {
+        var found = false
+        val saveIndex = index
+        val result = buildList {
+            while (!isEnd()) {
+                if (scope(peek())) {
+                    add(next())
+                    found = true
+                    break
+                }
+                add(next())
+            }
+        }
+        index = saveIndex
+        return result.takeIf { found }?.joinToString(" ")
+    }
 }

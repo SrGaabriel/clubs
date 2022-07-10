@@ -27,36 +27,43 @@ public class DefaultCommandParser(
         val argumentValues = mutableMapOf<CommandArgumentNode<*, *>, Any>()
 
         fun scanThroughBranch(root: Command<*>, node: CommandNode<*>, reader: StringReader): CommandNode<*>? {
-            if (node.children.isEmpty() || arguments.isEmpty()) {
+            println("Now scanning through another node ($node)")
+            if (node.children.isEmpty() || reader.isEnd())
                 return node
+            println("Node confirmed to have children.")
+            val peek = reader.peek()
+            val literalWithName = node.children.firstOrNull { it is CommandLiteralNode<*> && it.name.equals(peek, ignoreCase = true) }
+            println("Literal with name for node is: $literalWithName")
+            if (literalWithName != null) {
+                reader.next()
+                println("There is a literal with name $peek after all!")
+                return scanThroughBranch(root, literalWithName, reader)
             }
-            val next = reader.nextOrNull() ?: return node
-            val literalWithName = node.children
-                .firstOrNull { it is CommandLiteralNode<*> && it.name.equals(next, ignoreCase = true) }
+            println("There isn't a literal with name $peek")
 
-            if (literalWithName != null)
-                return scanThroughBranch(root, literalWithName, reader) ?: node
-            val argumentsInBranch = node.children.filterIsInstance<CommandArgumentNode<*, *>>()
-            if (argumentsInBranch.isEmpty())
+            println("Checking for argument nodes for $peek!")
+            val argumentNodes = node.children.filterIsInstance<CommandArgumentNode<*, *>>()
+            if (argumentNodes.isEmpty())
+                return null
+            else if (argumentNodes.size == 1) {
+                println("There was only one possible argument for $peek!")
+                val argumentFound = argumentNodes.first()
+                argumentValues[argumentFound] = argumentFound.type.parse(reader, dictionary)
+                return scanThroughBranch(root, argumentFound, reader)
+            }
+            println("Multiple possible arguments found for $peek!")
+
+            // there have to be at least two arguments
+            var desiredOutcome: CommandNode<*>? = null
+            val validArgumentNode = argumentNodes.firstOrNull {
+                it.type.isParseable(reader) && scanThroughBranch(root, node, reader)?.also { outcome -> desiredOutcome = outcome } != null
+            }
+            println("Not any argument was found! :(")
+            if (desiredOutcome == null || validArgumentNode == null)
                 return null
 
-            // it has to be an argument
-            var expectingOutcome: CommandNode<*>? = null
-            var expectingArgumentBranch: CommandArgumentNode<*, *>? = null
-            for (argumentBranch in argumentsInBranch) {
-                val successfulOutcome = scanThroughBranch(root, argumentBranch, reader)
-                if (successfulOutcome != null) {
-                    expectingOutcome = successfulOutcome
-                    expectingArgumentBranch = argumentBranch
-                    break
-                }
-            }
-            if (expectingOutcome == null)
-                return node
-
-            reader.index--
-            argumentValues[expectingArgumentBranch!!] = expectingArgumentBranch.type.parse(reader.clone(), dictionary)
-            return expectingOutcome
+            argumentValues[validArgumentNode] = validArgumentNode.type.parse(reader, dictionary)
+            return desiredOutcome
         }
         val node = scanThroughBranch(root, root, stringReader) ?: return null
         return CommandCall(root, node, argumentValues, arguments)
