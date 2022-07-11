@@ -31,7 +31,7 @@ public class BotClubsInstance(
                 listener = BotCommandListener(
                     handler = BotCommandHandler(),
                     prefixFunction = { prefix },
-                    parser = DefaultCommandParser(DefaultClubsDictionary(), prefix, repository)
+                    parser = DefaultCommandParser(DefaultClubsDictionary(), repository)
                 ),
                 repository = repository
             )

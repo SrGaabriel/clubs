@@ -7,10 +7,9 @@ import dev.gaabriel.clubs.common.util.StringReader
 
 public class DefaultCommandParser(
     override val dictionary: ClubsDictionary,
-    public val prefix: String,
     public val repository: CommandRepository
 ): CommandParser {
-    override fun parse(string: String): CommandCall? {
+    override fun parse(prefix: String, string: String): CommandCall? {
         if (!string.startsWith(prefix))
             return null
         val content = string.substring(prefix.length).trim().split(" ").ifEmpty { return null }
