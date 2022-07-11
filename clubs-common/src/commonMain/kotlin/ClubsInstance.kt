@@ -7,8 +7,4 @@ public interface ClubsInstance<C : Any, S : CommandContext<S>> {
     public fun start(client: C)
 
     public fun register(command: Command<S>)
-
-    public companion object {
-        public const val DEFAULT_PREFIX: String = "!"
-    }
 }

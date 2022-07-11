@@ -10,12 +10,13 @@ import io.github.deck.core.util.sendMessage
 import kotlinx.coroutines.Job
 
 public class BotCommandListener(
+    public var prefixFunction: MessageCreateEvent.() -> String,
+    public val parser: CommandParser,
     public val handler: BotCommandHandler,
-    public val parser: CommandParser
 ): CommandListener<DeckClient> {
     override fun startListening(client: DeckClient): Job = client.on<MessageCreateEvent> {
         val call = try {
-             parser.parse(message.content) ?: return@on
+             parser.parse(prefixFunction(), message.content) ?: return@on
         } catch (exception: CommandParsingException) {
             channel.sendMessage(exception.guildedMessage)
             return@on
