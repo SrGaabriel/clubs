@@ -5,7 +5,6 @@ import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.struct.CommandArgumentNode
 import dev.gaabriel.clubs.common.struct.CommandNode
 import io.github.deck.core.event.message.MessageCreateEvent
-import io.github.deck.core.util.sendMessage
 
 public class BotCommandHandler {
     @Suppress("unchecked_cast")
@@ -25,7 +24,7 @@ public class BotCommandHandler {
             rawArguments = call.rawArguments
         )
         if (declaration.executor == null) {
-            root.usage?.let { context.channel.sendMessage(it(context)) }
+            root.usage?.invoke(context)
             return
         }
         declaration.executor!!(context)

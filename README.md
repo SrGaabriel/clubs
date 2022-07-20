@@ -80,6 +80,6 @@ dependencies {
 }
 ```
 
-Here you can replace `clubsVersion` with the latest version (`1.0.3`).
+Here you can replace `clubsVersion` with the latest version (`1.0.4`).
 
 If you only wish to use the `common` module, you can just replace `clubs-bot` with `clubs-common`.
