@@ -30,21 +30,26 @@ public class DefaultBotCommandHandler(private val clubs: BotClubsInstance): BotC
             serverId = event.serverId,
             channelId = event.channelId,
             message = event.message,
-            command = call.root as Command<BotCommandContext>,
-            node = call.node as CommandNode<BotCommandContext>,
+            command = root,
+            node = declaration,
             arguments = call.arguments as Map<CommandArgumentNode<BotCommandContext, *>, Any>,
             rawArguments = call.rawArguments
         )
-        clubs.logger?.debug { "[Clubs] Now going to command `${context.command.names.first()}`" }
+        clubs.logger?.debug { "[Clubs] Now proceeding to execute command `${context.command.officialName}`" }
+        if (declaration.executor == null) {
+            root.usage?.invoke(context)
+            clubs.logger?.debug { "[Clubs] The node from `${context.command.officialName}` that was called is not executable (missing an executor)" }
+            return 0
+        }
         var exception: Exception? = null
         val executionTime = measureTimeMillis {
             try {
-                declaration.executor!!(context)
+                declaration.executor?.invoke(context)
             } catch (caughtException: Exception) {
                 exception = caughtException
             }
         }
-        clubs.logger?.info { "[Clubs] Command `${context.command.names.first()}` executed in ${executionTime}ms" }
+        clubs.logger?.info { "[Clubs] Command `${context.command.officialName}` executed in ${executionTime}ms" }
         event.client.eventService.eventWrappingFlow.emit(CommandExecuteEvent(
             client = event.client,
             barebones = event.barebones,

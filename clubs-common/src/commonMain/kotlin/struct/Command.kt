@@ -8,6 +8,14 @@ public open class Command<S : CommandContext<S>>(
 
     public open var usage: (suspend S.() -> Unit)? = { send("Malformed command") }
 
+    init {
+        assert(names.isNotEmpty()) {
+            "A command must have at least one name."
+        }
+    }
+
+    public val officialName: String = names.first()
+
     public fun usage(scope: suspend S.() -> Unit) {
         this.usage = scope
     }

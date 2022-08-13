@@ -1,20 +1,20 @@
 package dev.gaabriel.clubs.bot.impl
 
-import io.github.deck.core.DeckClient
-import io.github.deck.core.entity.Message
-import io.github.deck.core.stateless.StatelessServer
-import io.github.deck.core.stateless.StatelessUser
-import io.github.deck.core.stateless.channel.StatelessMessageChannel
-import io.github.deck.rest.builder.SendMessageRequestBuilder
 import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.struct.CommandArgumentNode
 import dev.gaabriel.clubs.common.struct.CommandContext
 import dev.gaabriel.clubs.common.struct.CommandNode
 import io.github.deck.common.EmbedBuilder
 import io.github.deck.common.util.GenericId
+import io.github.deck.core.DeckClient
+import io.github.deck.core.entity.Message
 import io.github.deck.core.event.message.MessageCreateEvent
+import io.github.deck.core.stateless.StatelessServer
+import io.github.deck.core.stateless.StatelessUser
+import io.github.deck.core.stateless.channel.StatelessMessageChannel
 import io.github.deck.core.util.*
-import java.util.UUID
+import io.github.deck.rest.builder.SendMessageRequestBuilder
+import java.util.*
 
 public open class BotCommandContext(
     public val client: DeckClient,

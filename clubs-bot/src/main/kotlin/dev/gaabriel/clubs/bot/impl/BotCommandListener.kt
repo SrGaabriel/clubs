@@ -26,7 +26,7 @@ public class DefaultBotCommandListener(private val clubs: BotClubsInstance): Bot
                 parsingTime = measureTimeMillis {
                     call = clubs.parser.parse(clubs.prefix(this), message.content) ?: return@on
                 }
-                clubs.logger?.debug { "[Clubs] Command call for ${call.root.names.first()} parsed in ${parsingTime}ms" }
+                clubs.logger?.debug { "[Clubs] Command call for ${call.root.officialName} parsed in ${parsingTime}ms" }
                 call
             } catch (exception: CommandParsingException) {
                 channel.sendMessage(exception.guildedMessage)
@@ -39,7 +39,7 @@ public class DefaultBotCommandListener(private val clubs: BotClubsInstance): Bot
                 call = call
             )
             client.eventService.eventWrappingFlow.emit(event)
-            if (event.proceed && call.node.executor != null)
+            if (event.proceed)
                 executionTime = clubs.handler.execute(call, this)
             else
                 return@on
