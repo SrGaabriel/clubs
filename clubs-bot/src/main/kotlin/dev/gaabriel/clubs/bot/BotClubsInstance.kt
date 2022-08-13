@@ -25,13 +25,13 @@ public class BotClubsInstance(
     }
 
     public companion object {
-        public operator fun invoke(prefix: String): BotClubsInstance {
+        public operator fun invoke(prefix: String, parseCache: Boolean = true): BotClubsInstance {
             val repository = DefaultCommandRepository()
             return BotClubsInstance(
                 listener = BotCommandListener(
                     handler = BotCommandHandler(),
-                    prefixFunction = { prefix },
-                    parser = DefaultCommandParser(DefaultClubsDictionary(), repository)
+                    prefix = { prefix },
+                    parser = DefaultCommandParser(parseCache, DefaultClubsDictionary(), repository)
                 ),
                 repository = repository
             )

@@ -6,17 +6,27 @@ import dev.gaabriel.clubs.common.struct.*
 import dev.gaabriel.clubs.common.util.StringReader
 
 public class DefaultCommandParser(
+    override var caching: Boolean,
     override val dictionary: ClubsDictionary,
     public val repository: CommandRepository
 ): CommandParser {
+    private val cache = mutableMapOf<String, CommandCall>()
+
     override fun parse(prefix: String, string: String): CommandCall? {
         if (!string.startsWith(prefix))
             return null
-        val content = string.substring(prefix.length).trim().split(" ").ifEmpty { return null }
-        val args = content.drop(1).toMutableList()
+        val content = string.substring(prefix.length).trim().ifBlank { return null }
+        val cached = cache[content]
+        if (cached != null)
+            return cached
 
-        val root = repository.search(content.first()) ?: return null
-        return getCommandCall(root, args)
+        val split = content.split(" ")
+        val args = split.drop(1).toMutableList()
+
+        val root = repository.search(split.first()) ?: return null
+        val call = getCommandCall(root, args) ?: return null
+        cache[content] = call
+        return call
     }
 
     private fun getCommandCall(root: Command<*>, arguments: List<String>): CommandCall? {
