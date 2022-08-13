@@ -2,14 +2,14 @@ package dev.gaabriel.clubs.common.parser
 
 import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
 import dev.gaabriel.clubs.common.repository.CommandRepository
-import dev.gaabriel.clubs.common.struct.*
-import dev.gaabriel.clubs.common.util.ClubsLogger
+import dev.gaabriel.clubs.common.struct.Command
+import dev.gaabriel.clubs.common.struct.CommandArgumentNode
+import dev.gaabriel.clubs.common.struct.CommandLiteralNode
+import dev.gaabriel.clubs.common.struct.CommandNode
 import dev.gaabriel.clubs.common.util.StringReader
 import io.github.reactivecircus.cache4k.Cache
-import kotlin.system.measureTimeMillis
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 
 public open class TextCommandParser(
     override var dictionary: ClubsDictionary,
@@ -20,7 +20,6 @@ public open class TextCommandParser(
         .expireAfterAccess(30.minutes)
         .build()
 
-    override var logger: ClubsLogger? = null
     override var caseSensitive: Boolean = false
 
     @OptIn(ExperimentalTime::class)
@@ -29,23 +28,17 @@ public open class TextCommandParser(
             return null
         val content = string.substring(prefix.length).trim().ifBlank { return null }
         val cached = cache?.get(content)
-        if (cached != null) {
-            logger?.log(ClubsLogger.LogLevel.Debug, "[Clubs] Command call for `${cached.root.names.first()}` already in cache.")
+        if (cached != null)
             return cached
-        }
 
         val split = content.split(" ")
-        val args = split.drop(1).toMutableList()
         val root = repository.search(
             name = split.first(),
             ignoreCase = !caseSensitive
         ) ?: return null
+        val args = split.drop(1).toMutableList()
+        val call: CommandCall = getCommandCall(root, args) ?: return null
 
-        val call: CommandCall
-        val parsingTimeInMillis = measureTimeMillis {
-            call = getCommandCall(root, args) ?: return null
-        }
-        logger?.log(ClubsLogger.LogLevel.Debug, "[Clubs] Command call for `${call.root.names.first()}` parsed in ${parsingTimeInMillis}ms")
         cache?.put(content, call)
         return call
     }

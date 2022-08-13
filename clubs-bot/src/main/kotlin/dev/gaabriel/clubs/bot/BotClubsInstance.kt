@@ -5,8 +5,6 @@ import dev.gaabriel.clubs.bot.impl.BotCommandListener
 import dev.gaabriel.clubs.bot.impl.DefaultBotCommandHandler
 import dev.gaabriel.clubs.bot.impl.DefaultBotCommandListener
 import dev.gaabriel.clubs.bot.util.PrefixProvider
-import dev.gaabriel.clubs.bot.util.wrap
-import io.github.deck.core.DeckClient
 import dev.gaabriel.clubs.common.ClubsInstance
 import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
 import dev.gaabriel.clubs.common.dictionary.DefaultClubsDictionary
@@ -17,8 +15,8 @@ import dev.gaabriel.clubs.common.repository.CommandRepository
 import dev.gaabriel.clubs.common.repository.DefaultCommandRepository
 import dev.gaabriel.clubs.common.struct.Command
 import dev.gaabriel.clubs.common.struct.CommandContext
-import dev.gaabriel.clubs.common.util.ClubsLogger
 import io.github.deck.common.log.DeckLogger
+import io.github.deck.core.DeckClient
 import io.github.deck.core.event.message.MessageCreateEvent
 import io.github.reactivecircus.cache4k.Cache
 import kotlin.contracts.ExperimentalContracts
@@ -41,7 +39,7 @@ public class BotClubsInstance: ClubsInstance<DeckClient> {
     public var caseSensitive: Boolean by parser::caseSensitive
     public var parsingResultsCache: Cache<String, CommandCall>? by parser::cache
 
-    public var logger: ClubsLogger? by parser::logger
+    public var logger: DeckLogger? = null
 
     /**
      * Sets a prefix provider ([MessageCreateEvent] -> [String])
@@ -59,16 +57,6 @@ public class BotClubsInstance: ClubsInstance<DeckClient> {
      */
     public fun setCache(cache: Cache<String, CommandCall>?) {
         parsingResultsCache = cache
-    }
-
-    @JvmName("setLogger1")
-    public fun setLogger(logger: ClubsLogger) {
-        this.logger = logger
-    }
-
-    @JvmName("setLogger2")
-    public fun setLogger(logger: DeckLogger) {
-        this.logger = logger.wrap()
     }
 
     public companion object {
