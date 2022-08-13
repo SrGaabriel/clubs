@@ -8,7 +8,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-public typealias PrefixProvider = MessageCreateEvent.() -> String
+public typealias PrefixProvider = suspend MessageCreateEvent.() -> String
 
 /**
  * Creates a new command with the provided [names] without registering it
