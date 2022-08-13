@@ -8,7 +8,7 @@ tasks {
             create<MavenPublication>("Clubs") {
                 groupId = "dev.gaabriel.clubs"
                 artifactId = project.name
-                version = Dependencies.ProjectVersion
+                version = Library.Version
                 from(components["kotlin"])
 
                 pom {

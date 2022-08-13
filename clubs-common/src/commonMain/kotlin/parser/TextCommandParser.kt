@@ -3,33 +3,54 @@ package dev.gaabriel.clubs.common.parser
 import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
 import dev.gaabriel.clubs.common.repository.CommandRepository
 import dev.gaabriel.clubs.common.struct.*
+import dev.gaabriel.clubs.common.util.ClubsLogger
 import dev.gaabriel.clubs.common.util.StringReader
+import io.github.reactivecircus.cache4k.Cache
+import kotlin.system.measureTimeMillis
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
-public class DefaultCommandParser(
-    override var caching: Boolean,
-    override val dictionary: ClubsDictionary,
-    public val repository: CommandRepository
+public open class TextCommandParser(
+    override var dictionary: ClubsDictionary,
+    override var repository: CommandRepository
 ): CommandParser {
-    private val cache = mutableMapOf<String, CommandCall>()
+    override var cache: Cache<String, CommandCall>? = Cache.Builder()
+        .maximumCacheSize(200)
+        .expireAfterAccess(30.minutes)
+        .build()
 
+    override var logger: ClubsLogger? = null
+    override var caseSensitive: Boolean = false
+
+    @OptIn(ExperimentalTime::class)
     override fun parse(prefix: String, string: String): CommandCall? {
         if (!string.startsWith(prefix))
             return null
         val content = string.substring(prefix.length).trim().ifBlank { return null }
-        val cached = cache[content]
-        if (cached != null)
+        val cached = cache?.get(content)
+        if (cached != null) {
+            logger?.log(ClubsLogger.LogLevel.Debug, "[Clubs] Command call for `${cached.root.names.first()}` already in cache.")
             return cached
+        }
 
         val split = content.split(" ")
         val args = split.drop(1).toMutableList()
+        val root = repository.search(
+            name = split.first(),
+            ignoreCase = !caseSensitive
+        ) ?: return null
 
-        val root = repository.search(split.first()) ?: return null
-        val call = getCommandCall(root, args) ?: return null
-        cache[content] = call
+        val call: CommandCall
+        val parsingTimeInMillis = measureTimeMillis {
+            call = getCommandCall(root, args) ?: return null
+        }
+        logger?.log(ClubsLogger.LogLevel.Debug, "[Clubs] Command call for `${call.root.names.first()}` parsed in ${parsingTimeInMillis}ms")
+        cache?.put(content, call)
         return call
     }
 
-    private fun getCommandCall(root: Command<*>, arguments: List<String>): CommandCall? {
+    protected fun getCommandCall(root: Command<*>, arguments: List<String>): CommandCall? {
         if (root.children.isEmpty())
             return CommandCall(root, root, emptyMap(), arguments)
         val stringReader = StringReader(arguments)
@@ -39,10 +60,13 @@ public class DefaultCommandParser(
             if (node.children.isEmpty() || reader.isEnd())
                 return node
             val peek = reader.peek()
-            val literalWithName = node.children.firstOrNull { it is CommandLiteralNode<*> && it.name.equals(peek, ignoreCase = true) }
-            if (literalWithName != null) {
+            val literals = node.children.asSequence().filterIsInstance<CommandLiteralNode<*>>()
+            val matchingLiteral = literals.firstOrNull { peek in it.names }
+                ?: (literals.firstOrNull { peek.lowercase() in it.names.map { name -> name.lowercase() } })
+
+            if (matchingLiteral != null) {
                 reader.next()
-                return scanThroughBranch(root, literalWithName, reader)
+                return scanThroughBranch(root, matchingLiteral, reader)
             }
 
             val argumentNodes = node.children.filterIsInstance<CommandArgumentNode<*, *>>()

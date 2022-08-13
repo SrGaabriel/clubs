@@ -9,8 +9,15 @@ public class DefaultCommandRepository: CommandRepository {
         commands[it] = command
     }
 
-    override fun search(name: String): Command<*>? =
-        commands[name]
+    override fun search(name: String, ignoreCase: Boolean): Command<*>? {
+        val found = commands[name]
+        if (found == null && ignoreCase) {
+            return commands[commands.keys.firstOrNull {
+                name.lowercase() == it.lowercase()
+            }]
+        }
+        return found
+    }
 
     override fun exclude(command: Command<*>): Unit = command.names.forEach {
         commands.remove(it)

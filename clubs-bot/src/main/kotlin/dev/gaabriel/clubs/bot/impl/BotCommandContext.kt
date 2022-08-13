@@ -16,21 +16,21 @@ import io.github.deck.core.event.message.MessageCreateEvent
 import io.github.deck.core.util.*
 import java.util.UUID
 
-public data class BotCommandContext(
-    val client: DeckClient,
-    val event: MessageCreateEvent,
-    val userId: GenericId,
-    val serverId: GenericId?,
-    val channelId: UUID,
-    val message: Message,
+public open class BotCommandContext(
+    public val client: DeckClient,
+    public val event: MessageCreateEvent,
+    public val userId: GenericId,
+    public val serverId: GenericId?,
+    public val channelId: UUID,
+    public val message: Message,
     override val command: Command<BotCommandContext>,
     override val node: CommandNode<BotCommandContext>,
     override val arguments: Map<CommandArgumentNode<BotCommandContext, *>, Any>,
     override val rawArguments: List<String>
 ): CommandContext<BotCommandContext> {
-    val user: StatelessUser by lazy { StatelessUser(client, userId) }
-    val server: StatelessServer? by lazy { serverId?.let { StatelessServer(client, it) } }
-    val channel: StatelessMessageChannel by lazy { StatelessMessageChannel(client, channelId, serverId) }
+    public val user: StatelessUser by lazy { StatelessUser(client, userId) }
+    public val server: StatelessServer? by lazy { serverId?.let { StatelessServer(client, it) } }
+    public val channel: StatelessMessageChannel by lazy { StatelessMessageChannel(client, channelId, serverId) }
 
     public val content: String get() = message.content
 
@@ -51,4 +51,42 @@ public data class BotCommandContext(
 
     public suspend fun replyEmbed(content: String? = null, embed: EmbedBuilder.() -> Unit): Message =
         this.message.sendReplyWithEmbed(content, embed)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as BotCommandContext
+
+        if (client != other.client) return false
+        if (event != other.event) return false
+        if (userId != other.userId) return false
+        if (serverId != other.serverId) return false
+        if (channelId != other.channelId) return false
+        if (message != other.message) return false
+        if (command != other.command) return false
+        if (node != other.node) return false
+        if (arguments != other.arguments) return false
+        if (rawArguments != other.rawArguments) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = client.hashCode()
+        result = 31 * result + event.hashCode()
+        result = 31 * result + userId.hashCode()
+        result = 31 * result + (serverId?.hashCode() ?: 0)
+        result = 31 * result + channelId.hashCode()
+        result = 31 * result + message.hashCode()
+        result = 31 * result + command.hashCode()
+        result = 31 * result + node.hashCode()
+        result = 31 * result + arguments.hashCode()
+        result = 31 * result + rawArguments.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "BotCommandContext(client=$client, event=$event, userId='$userId', serverId=$serverId, channelId=$channelId, message=$message, command=$command, node=$node, arguments=$arguments, rawArguments=$rawArguments)"
+    }
 }

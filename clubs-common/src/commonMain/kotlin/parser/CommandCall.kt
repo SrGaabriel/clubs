@@ -8,5 +8,5 @@ public data class CommandCall(
     val root: Command<*>,
     val node: CommandNode<*>,
     val arguments: Map<CommandArgumentNode<*, *>, Any>,
-    val rawArguments: List<String>,
+    val rawArguments: List<String>
 )

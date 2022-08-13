@@ -13,7 +13,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Dependencies.KotlinVersion}")
+                api(libs.cache4k)
+                api(libs.kotlinx.coroutines)
             }
             explicitApi()
         }

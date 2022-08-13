@@ -8,8 +8,8 @@ public interface CommandNode<S : CommandContext<S>> {
         this.executor = executor
     }
 
-    public fun literal(name: String, scope: CommandLiteralNode<S>.() -> Unit) {
-        children.add(CommandLiteralNode<S>(name).apply(scope))
+    public fun literal(vararg names: String, scope: CommandLiteralNode<S>.() -> Unit) {
+        children.add(CommandLiteralNode<S>(names.toList()).apply(scope))
     }
 
     public fun <T : Any> argument(name: String, type: ArgumentType<T>, scope: CommandArgumentNode<S, T>.(CommandArgumentNode<S, T>) -> Unit) {
@@ -17,7 +17,7 @@ public interface CommandNode<S : CommandContext<S>> {
     }
 }
 
-public data class CommandLiteralNode<S : CommandContext<S>>(val name: String): CommandNode<S> {
+public data class CommandLiteralNode<S : CommandContext<S>>(val names: List<String>): CommandNode<S> {
     override val children: MutableList<CommandNode<S>> = mutableListOf()
     override var executor: (suspend S.() -> Unit)? = null
 }
