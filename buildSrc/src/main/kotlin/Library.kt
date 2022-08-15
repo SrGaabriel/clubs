@@ -1,3 +1,3 @@
 object Library {
-    const val Version = "1.1.3"
+    const val Version = "1.1.4"
 }
