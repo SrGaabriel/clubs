@@ -55,7 +55,7 @@ public open class TextCommandParser(
             val peek = reader.peek()
             val literals = node.children.asSequence().filterIsInstance<CommandLiteralNode<*>>()
             val matchingLiteral = literals.firstOrNull { peek in it.names }
-                ?: (literals.firstOrNull { peek.lowercase() in it.names.map { name -> name.lowercase() } })
+                ?: if (!caseSensitive) (literals.firstOrNull { peek.lowercase() in it.names.map { name -> name.lowercase() } }) else null
 
             if (matchingLiteral != null) {
                 reader.next()

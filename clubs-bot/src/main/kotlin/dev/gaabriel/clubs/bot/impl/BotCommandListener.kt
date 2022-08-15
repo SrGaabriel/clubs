@@ -40,7 +40,9 @@ public class DefaultBotCommandListener(private val clubs: BotClubsInstance): Bot
             )
             client.eventService.eventWrappingFlow.emit(event)
             if (event.proceed)
-                executionTime = clubs.handler.execute(call, this)
+                executionTime = measureTimeMillis {
+                    clubs.handler.execute(call, this)
+                }
             else
                 return@on
         }

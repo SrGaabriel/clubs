@@ -12,15 +12,12 @@ import io.github.deck.core.event.message.MessageCreateEvent
 import kotlin.system.measureTimeMillis
 
 public fun interface BotCommandHandler {
-    /**
-     * @return execution time
-     */
-    public suspend fun execute(call: CommandCall, event: MessageCreateEvent): Long
+    public suspend fun execute(call: CommandCall, event: MessageCreateEvent)
 }
 
 public class DefaultBotCommandHandler(private val clubs: BotClubsInstance): BotCommandHandler {
     @Suppress("unchecked_cast")
-    override suspend fun execute(call: CommandCall, event: MessageCreateEvent): Long {
+    override suspend fun execute(call: CommandCall, event: MessageCreateEvent) {
         val root = call.root as Command<BotCommandContext>
         val declaration = call.node as CommandNode<BotCommandContext>
         val context = BotCommandContext(
@@ -39,7 +36,6 @@ public class DefaultBotCommandHandler(private val clubs: BotClubsInstance): BotC
         if (declaration.executor == null) {
             root.usage?.invoke(context)
             clubs.logger?.debug { "[Clubs] The node from `${context.command.officialName}` that was called is not executable (missing an executor)" }
-            return 0
         }
         var exception: Exception? = null
         val executionTime = measureTimeMillis {
@@ -59,6 +55,5 @@ public class DefaultBotCommandHandler(private val clubs: BotClubsInstance): BotC
             executionTime = executionTime,
             exception = exception
         ))
-        return executionTime
     }
 }
