@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm") version "1.7.10"
     `maven-publish`
@@ -8,7 +10,7 @@ subprojects {
     version = Library.Version
     apply<MavenPublishPlugin>()
 
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
+    tasks.withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = freeCompilerArgs + listOf("-Xexplicit-api=strict", "-opt-in=kotlin.RequiresOptIn")
             jvmTarget = "1.8"

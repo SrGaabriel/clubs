@@ -14,7 +14,7 @@ public abstract class ArgumentType<T>(
 
     public object Integer: ArgumentType<Int>("32 bits integer") {
         override fun isParseable(reader: StringReader): Boolean =
-            reader.peek().toIntOrNull() != null
+            reader.peek() matches Regex("^\\d+\$")
 
         override fun parse(reader: StringReader, dictionary: ClubsDictionary): Int =
             reader.next().let { it.toIntOrNull() ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, it)) }
@@ -22,7 +22,7 @@ public abstract class ArgumentType<T>(
 
     public object Double: ArgumentType<kotlin.Double>("64 bits floating point") {
         override fun isParseable(reader: StringReader): Boolean =
-            reader.peek().toDoubleOrNull() != null
+            reader.peek() matches Regex("^\\d+(\\.\\d+|)\$")
 
         override fun parse(reader: StringReader, dictionary: ClubsDictionary): kotlin.Double =
             reader.next().let { it.toDoubleOrNull() ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, it)) }
@@ -30,7 +30,7 @@ public abstract class ArgumentType<T>(
 
     public object Short: ArgumentType<kotlin.Short>("16 bits integer") {
         override fun isParseable(reader: StringReader): Boolean =
-            reader.peek().toShortOrNull() != null
+            reader.peek() matches Regex("^\\d+\$")
 
         override fun parse(reader: StringReader, dictionary: ClubsDictionary): kotlin.Short =
             reader.next().let { it.toShortOrNull() ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, it)) }
@@ -38,7 +38,7 @@ public abstract class ArgumentType<T>(
 
     public object Long: ArgumentType<kotlin.Long>("64 bits integer") {
         override fun isParseable(reader: StringReader): Boolean =
-            reader.peek().toLongOrNull() != null
+            reader.peek() matches Regex("^\\d+\$")
 
         override fun parse(reader: StringReader, dictionary: ClubsDictionary): kotlin.Long =
             reader.next().let { it.toLongOrNull() ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, it)) }
@@ -46,7 +46,7 @@ public abstract class ArgumentType<T>(
 
     public object Float: ArgumentType<kotlin.Float>("32 bits floating point") {
         override fun isParseable(reader: StringReader): Boolean =
-            reader.peek().toFloatOrNull() != null
+            reader.peek() matches Regex("^\\d+(\\.\\d+|)\$")
 
         override fun parse(reader: StringReader, dictionary: ClubsDictionary): kotlin.Float =
             reader.next().let { it.toFloatOrNull() ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, it)) } }
@@ -60,7 +60,7 @@ public abstract class ArgumentType<T>(
 
         public object Quote : Text("Quote") {
             override fun isParseable(reader: StringReader): Boolean =
-                reader.peek().startsWith('"') && reader.peekRemaining().contains('"')
+                reader.peekRemaining() matches Regex("^\".*\"")
 
             override fun parse(reader: StringReader, dictionary: ClubsDictionary): String {
                 val peek = reader.peek()

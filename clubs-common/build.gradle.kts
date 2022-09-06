@@ -9,6 +9,7 @@ repositories {
 
 kotlin {
     jvm()
+    explicitApi()
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -16,12 +17,11 @@ kotlin {
                 api(libs.cache4k)
                 api(libs.kotlinx.coroutines)
             }
-            explicitApi()
         }
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
+                implementation(kotlin("test"))
+                implementation(libs.mockk)
             }
         }
     }

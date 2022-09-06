@@ -1,6 +1,7 @@
 [versions]
-deck = "0.5.4-BOT"
+deck = "0.6"
 
+mockk = "1.12.5"
 cache4k = "0.7.0"
 coroutines = "1.6.4"
 
@@ -8,4 +9,5 @@ coroutines = "1.6.4"
 deck-core = { module = "com.github.SrGaabriel.deck:deck-core", version.ref = "deck" }
 
 cache4k = { module = "io.github.reactivecircus.cache4k:cache4k", version.ref = "cache4k" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
