@@ -63,7 +63,7 @@ public class DefaultBotCommandHandler(private val clubs: BotClubsInstance): BotC
             exception = exception
         )
         executionEvent.client.eventService.eventWrappingFlow.emit(executionEvent)
-        if (executionEvent.logException) {
+        if (executionEvent.logException && exception != null) {
             clubs.logger?.error(exception) {}
         }
     }
