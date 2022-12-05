@@ -71,7 +71,7 @@ public abstract class ArgumentType<T>(
 
         public object Quote : Text("Quote") {
             override fun isParseable(reader: StringReader): Boolean =
-                reader.peek().let {
+                reader.peekRemaining().let {
                     it.startsWith('"') && it.count { digit -> digit == '"' } > 1
                 }
 
