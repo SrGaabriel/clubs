@@ -76,11 +76,11 @@ public class ParsingTest  {
 
     @Test
     public fun `should parse case sensitive command`() {
+        parser.caseSensitive = true
         val talkCommand = baseCommand("talk") {
-            literal("case") {}
-            literal("CASE") {}
+            literal("case", "CASE", "CaSe") {}
         }
-        every { repository.search("talk", true) } returns talkCommand
+        every { repository.search("talk", false) } returns talkCommand
         val lowercaseCaseParsingResult = parser.parse("+", """+talk case""")
         val uppercaseCaseParsingResult = parser.parse("+", """+talk CASE""")
         val mixedCaseParsingResult = parser.parse("+", """+talk CaSe""")
@@ -92,16 +92,17 @@ public class ParsingTest  {
         // Lowercase
         assertEquals(talkCommand.children.size, lowercaseCaseParsingResult.root.children.size)
         assertEquals(talkCommand.children[0], lowercaseCaseParsingResult.node)
-        assertEquals("case", (lowercaseCaseParsingResult.node as CommandLiteralNode).names.first())
+        assertEquals("case", (lowercaseCaseParsingResult.node as CommandLiteralNode).name)
 
         // Uppercase
         assertEquals(talkCommand.children.size, uppercaseCaseParsingResult.root.children.size)
         assertEquals(talkCommand.children[1], uppercaseCaseParsingResult.node)
-        assertEquals("CASE", (uppercaseCaseParsingResult.node as CommandLiteralNode).names.first())
+        assertEquals("CASE", (uppercaseCaseParsingResult.node as CommandLiteralNode).name)
 
         // Mixed case
         assertEquals(talkCommand.children.size, mixedCaseParsingResult.root.children.size)
-        assertEquals(talkCommand.children[0], mixedCaseParsingResult.node)
-        assertEquals("case", (mixedCaseParsingResult.node as CommandLiteralNode).names.first())
+        assertEquals(talkCommand.children[2], mixedCaseParsingResult.node)
+        assertEquals("CaSe", (mixedCaseParsingResult.node as CommandLiteralNode).name)
+        parser.caseSensitive = false
     }
 }

@@ -1,12 +1,22 @@
 package dev.gaabriel.clubs.common.struct
 
+import kotlinx.coroutines.sync.Mutex
+
 public open class Command<S : CommandContext<S>>(
     public val names: List<String>,
-): CommandNode<S> {
-    override val children: MutableList<CommandNode<S>> = mutableListOf()
-    override var executor: (suspend S.() -> Unit)? = null
-
+): CommandNode<S>(names.first()) {
     public open var usage: (suspend S.() -> Unit)? = { send("Malformed command") }
+
+    internal var executionMutex: Mutex? = Mutex()
+    @PublishedApi
+    internal var currentContext: S? = null
+    public var synchronized: Boolean
+        get() = executionMutex != null
+        set(value) {
+            executionMutex = if (value) Mutex() else null
+        }
+
+    override val command: Command<S> get() = this
 
     init {
         assert(names.isNotEmpty()) {
@@ -20,27 +30,15 @@ public open class Command<S : CommandContext<S>>(
         this.usage = scope
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Command<*>) return false
-
-        if (names != other.names) return false
-        if (children != other.children) return false
-        if (executor != other.executor) return false
-        if (usage != other.usage) return false
-
-        return true
-    }
+    override fun equals(other: Any?): Boolean = this === other
 
     override fun hashCode(): Int {
-        var result = names.hashCode()
-        result = 31 * result + children.hashCode()
-        result = 31 * result + (executor?.hashCode() ?: 0)
-        result = 31 * result + (usage?.hashCode() ?: 0)
-        return result
+        return javaClass.hashCode()
     }
 
     override fun toString(): String {
         return "Command(names=$names)"
     }
+
+
 }

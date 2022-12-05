@@ -3,6 +3,8 @@ package dev.gaabriel.clubs.common.util
 public data class StringReader(public val content: List<String>) {
     public var index: Int = 0
 
+    public val hasMore: Boolean get() = !isEnd()
+
     public fun isLast(): Boolean = index + 1 >= content.size
 
     public fun isEnd(): Boolean = index >= content.size
@@ -101,7 +103,7 @@ public data class StringReader(public val content: List<String>) {
     public fun readUntilInclusiveOrNull(scope: (String) -> Boolean): String? {
         var found = false
         val result = buildList {
-            while (!isEnd()) {
+            while (hasMore) {
                 if (scope(peek())) {
                     add(next())
                     found = true

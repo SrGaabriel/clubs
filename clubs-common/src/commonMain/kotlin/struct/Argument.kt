@@ -13,65 +13,76 @@ public abstract class ArgumentType<T>(
     public abstract fun isParseable(reader: StringReader): Boolean
 
     public object Integer: ArgumentType<Int>("32 bits integer") {
+        private val regex = Regex("^\\d+\$")
+
         override fun isParseable(reader: StringReader): Boolean =
-            reader.peek() matches Regex("^\\d+\$")
+            reader.peek() matches regex
 
         override fun parse(reader: StringReader, dictionary: ClubsDictionary): Int =
-            reader.next().let { it.toIntOrNull() ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, it)) }
+            reader.next().toInt()
     }
 
     public object Double: ArgumentType<kotlin.Double>("64 bits floating point") {
+        private val regex = Regex("^\\d+(\\.\\d+|)\$")
+
         override fun isParseable(reader: StringReader): Boolean =
-            reader.peek() matches Regex("^\\d+(\\.\\d+|)\$")
+            reader.peek() matches regex
 
         override fun parse(reader: StringReader, dictionary: ClubsDictionary): kotlin.Double =
-            reader.next().let { it.toDoubleOrNull() ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, it)) }
+            reader.next().toDouble()
     }
 
     public object Short: ArgumentType<kotlin.Short>("16 bits integer") {
+        private val regex = Regex("^\\d+\$")
+
         override fun isParseable(reader: StringReader): Boolean =
-            reader.peek() matches Regex("^\\d+\$")
+            reader.peek() matches regex
 
         override fun parse(reader: StringReader, dictionary: ClubsDictionary): kotlin.Short =
-            reader.next().let { it.toShortOrNull() ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, it)) }
+            reader.next().toShort()
     }
 
     public object Long: ArgumentType<kotlin.Long>("64 bits integer") {
+        private val regex = Regex("^\\d+\$")
+
         override fun isParseable(reader: StringReader): Boolean =
-            reader.peek() matches Regex("^\\d+\$")
+            reader.peek() matches regex
 
         override fun parse(reader: StringReader, dictionary: ClubsDictionary): kotlin.Long =
-            reader.next().let { it.toLongOrNull() ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, it)) }
+            reader.next().toLong()
     }
 
     public object Float: ArgumentType<kotlin.Float>("32 bits floating point") {
+        private val regex = Regex("^\\d+(\\.\\d+|)\$")
+
         override fun isParseable(reader: StringReader): Boolean =
-            reader.peek() matches Regex("^\\d+(\\.\\d+|)\$")
+            reader.peek() matches regex
 
         override fun parse(reader: StringReader, dictionary: ClubsDictionary): kotlin.Float =
-            reader.next().let { it.toFloatOrNull() ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, it)) } }
+            reader.next().toFloat()
+    }
 
     public sealed class Text(name: String, greedy: Boolean = false): ArgumentType<String>(name, greedy) {
         public object Word : Text("Word") {
-            override fun isParseable(reader: StringReader): Boolean = true
+            override fun isParseable(reader: StringReader): Boolean = !reader.isEnd()
 
             override fun parse(reader: StringReader, dictionary: ClubsDictionary): String = reader.next()
         }
 
         public object Quote : Text("Quote") {
             override fun isParseable(reader: StringReader): Boolean =
-                reader.peekRemaining() matches Regex("^\".*\"")
+                reader.peek().let {
+                    it.startsWith('"') && it.count { digit -> digit == '"' } > 1
+                }
 
             override fun parse(reader: StringReader, dictionary: ClubsDictionary): String {
-                val peek = reader.peek()
-                if (!peek.startsWith('"')) throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, name, peek))
                 return reader.readUntilInclusiveOrNull { it.endsWith('"') }?.drop(1)?.dropLast(1)
                     ?: throw CommandParsingException(dictionary.getEntry(ClubsDictionary.QUOTE_ARGUMENT_NEVER_CLOSED))
             }
         }
 
         public object Greedy : Text("Text", greedy = true) {
-            override fun isParseable(reader: StringReader): Boolean = true
+            override fun isParseable(reader: StringReader): Boolean = !reader.isEnd()
 
             override fun parse(reader: StringReader, dictionary: ClubsDictionary): String = reader.remaining()
         }

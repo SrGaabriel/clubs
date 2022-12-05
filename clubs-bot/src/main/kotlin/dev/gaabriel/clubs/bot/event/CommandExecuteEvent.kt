@@ -23,4 +23,6 @@ public data class CommandExecuteEvent(
     public val node: CommandNode<*> = call.node
     public val arguments: Map<CommandArgumentNode<*, *>, Any> = call.arguments
     public val rawArguments: List<String> = call.rawArguments
+
+    public var logException: Boolean = true
 }

@@ -1,15 +1,12 @@
 package dev.gaabriel.clubs.common.parser
 
 import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
+import dev.gaabriel.clubs.common.exception.CommandParsingException
 import dev.gaabriel.clubs.common.repository.CommandRepository
-import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandArgumentNode
-import dev.gaabriel.clubs.common.struct.CommandLiteralNode
-import dev.gaabriel.clubs.common.struct.CommandNode
+import dev.gaabriel.clubs.common.struct.*
 import dev.gaabriel.clubs.common.util.StringReader
 import io.github.reactivecircus.cache4k.Cache
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.ExperimentalTime
 
 public open class TextCommandParser(
     override var dictionary: ClubsDictionary,
@@ -22,7 +19,6 @@ public open class TextCommandParser(
 
     override var caseSensitive: Boolean = false
 
-    @OptIn(ExperimentalTime::class)
     override fun parse(prefix: String, string: String): CommandCall? {
         if (!string.startsWith(prefix))
             return null
@@ -47,42 +43,40 @@ public open class TextCommandParser(
         if (root.children.isEmpty())
             return CommandCall(root, root, emptyMap(), arguments)
         val stringReader = StringReader(arguments)
-        val argumentValues = mutableMapOf<CommandArgumentNode<*, *>, Any>()
 
-        fun scanThroughBranch(root: Command<*>, node: CommandNode<*>, reader: StringReader): CommandNode<*>? {
-            if (node.children.isEmpty() || reader.isEnd())
-                return node
-            val peek = reader.peek()
-            val literals = node.children.asSequence().filterIsInstance<CommandLiteralNode<*>>()
-            val matchingLiteral = literals.firstOrNull { peek in it.names }
-                ?: if (!caseSensitive) (literals.firstOrNull { peek.lowercase() in it.names.map { name -> name.lowercase() } }) else null
+        val (node, argumentValues) = scanCallAndStoreArguments(root, stringReader) ?: return null
+        return CommandCall(root, node, argumentValues, arguments)
+    }
+
+    protected fun scanCallAndStoreArguments(command: Command<*>, reader: StringReader): Pair<CommandNode<*>, Map<CommandArgumentNode<*, *>, Any>>? {
+        val arguments = mutableMapOf<CommandArgumentNode<*, *>, Any>()
+
+        var currentNode: CommandNode<*> = command
+        while (reader.hasMore && currentNode.children.isNotEmpty()) {
+            val matchingLiteral =
+                currentNode.children.firstOrNull { it is CommandLiteralNode<*> && it.name.equals(reader.peek(), !caseSensitive) }
 
             if (matchingLiteral != null) {
-                reader.next()
-                return scanThroughBranch(root, matchingLiteral, reader)
+                reader.index++
+                currentNode = matchingLiteral
+                continue
             }
 
-            val argumentNodes = node.children.filterIsInstance<CommandArgumentNode<*, *>>()
-            if (argumentNodes.isEmpty())
-                return null
-            else if (argumentNodes.size == 1) {
+            val argumentNodes = currentNode.children.filterIsInstance<CommandArgumentNode<*, *>>()
+            if (argumentNodes.size == 1) {
                 val argumentFound = argumentNodes.first()
-                argumentValues[argumentFound] = argumentFound.type.parse(reader, dictionary)
-                return scanThroughBranch(root, argumentFound, reader)
+                if (!argumentFound.type.isParseable(reader)) {
+                    throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, argumentFound.type.name, reader.peek()))
+                }
+                arguments[argumentFound] = argumentFound.type.parse(reader, dictionary)
+                currentNode = argumentFound
+                continue
             }
 
-            // there have to be at least two arguments
-            var desiredOutcome: CommandNode<*>? = null
-            val validArgumentNode = argumentNodes.firstOrNull {
-                it.type.isParseable(reader) && scanThroughBranch(root, node, reader)?.also { outcome -> desiredOutcome = outcome } != null
-            }
-            if (desiredOutcome == null || validArgumentNode == null)
-                return null
-
-            argumentValues[validArgumentNode] = validArgumentNode.type.parse(reader, dictionary)
-            return desiredOutcome
+            val validArgumentNode = argumentNodes.firstOrNull { it.type.isParseable(reader) } ?: return null
+            arguments[validArgumentNode] = validArgumentNode.type.parse(reader, dictionary)
+            currentNode = validArgumentNode
         }
-        val node = scanThroughBranch(root, root, stringReader) ?: return null
-        return CommandCall(root, node, argumentValues, arguments)
+        return currentNode to arguments
     }
 }

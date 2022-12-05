@@ -1,9 +1,6 @@
 package dev.gaabriel.clubs.bot
 
-import dev.gaabriel.clubs.bot.impl.BotCommandHandler
-import dev.gaabriel.clubs.bot.impl.BotCommandListener
-import dev.gaabriel.clubs.bot.impl.DefaultBotCommandHandler
-import dev.gaabriel.clubs.bot.impl.DefaultBotCommandListener
+import dev.gaabriel.clubs.bot.impl.*
 import dev.gaabriel.clubs.bot.util.PrefixProvider
 import dev.gaabriel.clubs.common.ClubsInstance
 import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
