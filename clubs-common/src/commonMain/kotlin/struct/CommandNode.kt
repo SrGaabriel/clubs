@@ -1,6 +1,6 @@
 package dev.gaabriel.clubs.common.struct
 
-import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.sync.Mutex
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -8,27 +8,36 @@ public abstract class CommandNode<S : CommandContext<S>>(public open val name: S
     public val children: MutableList<CommandNode<S>> = mutableListOf()
     private var executor: (suspend S.() -> Unit)? = null
 
-    private var workingArgument: CommandArgumentNode<S, *>? = null
+    private var executionMutex: Mutex? = Mutex()
     @PublishedApi
-    internal val workspace: CommandNode<S> get() = workingArgument ?: this
+    internal var currentContext: S? = null
+    public var synchronized: Boolean
+        get() = executionMutex != null
+        set(value) {
+            executionMutex = when {
+                value && executionMutex != null -> return
+                value -> Mutex()
+                !value && executionMutex?.isLocked == true -> error("Can't make node async while it is being executed")
+                else -> null
+            }
+        }
 
-    public val isExecutable: Boolean get() = workspace.executor != null
+    public val isExecutable: Boolean get() = executor != null
 
-    public abstract val command: Command<S>
     public val delegatedArguments: MutableList<DelegatedArgument<S, *>> = mutableListOf()
 
     public fun executor(executor: suspend S.() -> Unit) {
-        workspace.executor = executor
+        this.executor = executor
     }
 
     public fun literal(vararg names: String, scope: CommandLiteralNode<S>.() -> Unit) {
         for (name in names) {
-            workspace.children.add(CommandLiteralNode(command, name).apply(scope))
+            children.add(CommandLiteralNode<S>(name).also { it.synchronized = this.synchronized }.apply(scope))
         }
     }
 
     public fun <T : Any> argument(name: String? = null, type: ArgumentType<T>, scope: CommandArgumentNode<S, T>.(CommandArgumentNode<S, T>) -> Unit) {
-        workspace.children.add(CommandArgumentNode(command, name, type).apply { scope(this) })
+        children.add(CommandArgumentNode<S, T>(name, type).also { it.synchronized = this.synchronized }.apply { scope(this) })
     }
 
     public fun <T : Any> requiredArgument(name: String? = null, type: ArgumentType<T>): DelegatedArgument.Required<S, T> {
@@ -45,7 +54,7 @@ public abstract class CommandNode<S : CommandContext<S>>(public open val name: S
 
     public fun selector(options: List<String>, scope: CommandLiteralNode<S>.(String) -> Unit) {
         options.forEach { option ->
-            workspace.literal(option) {
+            literal(option) {
                 scope(option)
             }
         }
@@ -53,39 +62,39 @@ public abstract class CommandNode<S : CommandContext<S>>(public open val name: S
 
     public suspend fun execute(context: S) {
         var caughtException: Throwable? = null
-        command.executionMutex?.withLock {
-            command.currentContext = context
-            try {
-                workspace.executor?.let { it(context) }
-            } catch (throwable: Throwable) {
-                caughtException = throwable
-            }
-            command.currentContext = null
+
+        executionMutex?.lock()
+        try {
+            currentContext = context
+            executor?.let { it(context) }
+            currentContext = null
+        } catch (throwable: Throwable) {
+            caughtException = throwable
         }
-        if (caughtException != null) throw caughtException!!
+        executionMutex?.unlock()
+        if (caughtException != null)
+            throw caughtException
     }
 
     public inline operator fun <reified T : Any> DelegatedArgument.Required<S, T>.provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, T> =
         ReadOnlyProperty { _, _ ->
             val context =
-                command.currentContext ?: error("Tried to delegate argument value while not in a command context")
+                currentContext ?: error("Tried to delegate argument value while not in a command context")
             context.arguments[this] as T
         }
 
     public inline operator fun <reified T : Any> DelegatedArgument.Optional<S, T>.provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, T?> =
         ReadOnlyProperty { _, _ ->
             val context =
-                command.currentContext ?: error("Tried to delegate argument value while not in a command context")
+                currentContext ?: error("Tried to delegate argument value while not in a command context")
             val value = context.arguments[this] ?: return@ReadOnlyProperty null
             value as T
         }
 }
 
-public data class CommandLiteralNode<S : CommandContext<S>>(override val command: Command<S>, override val name: String)
-    : CommandNode<S>(name)
+public data class CommandLiteralNode<S : CommandContext<S>>(override val name: String): CommandNode<S>(name)
 
 public class CommandArgumentNode<S : CommandContext<S>, T : Any>(
-    override val command: Command<S>,
     name: String?,
     override val type: ArgumentType<T>,
 ): CommandNode<S>(name), CommandArgument<S, T> {

@@ -32,5 +32,5 @@ jobs:
       - uses: actions/upload-artifact@v2
         name: Upload Bot
         with:
-          name: Client
+          name: Bot
           path: clubs-bot/build/libs/
