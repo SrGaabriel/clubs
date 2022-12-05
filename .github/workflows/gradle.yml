@@ -27,10 +27,10 @@ jobs:
         name: Upload Common
         with:
           name: Common
-          path: common/build/libs/
+          path: clubs-common/build/libs/
 
       - uses: actions/upload-artifact@v2
-        name: Upload Client
+        name: Upload Bot
         with:
           name: Client
-          path: client/build/libs/
+          path: clubs-bot/build/libs/
