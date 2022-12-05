@@ -1,7 +1,7 @@
 package dev.gaabriel.clubs.bot.impl
 
 import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandArgumentNode
+import dev.gaabriel.clubs.common.struct.CommandArgument
 import dev.gaabriel.clubs.common.struct.CommandContext
 import dev.gaabriel.clubs.common.struct.CommandNode
 import io.github.deck.common.EmbedBuilder
@@ -25,7 +25,7 @@ public open class BotCommandContext(
     public val message: Message,
     override val command: Command<BotCommandContext>,
     override val node: CommandNode<BotCommandContext>,
-    override val arguments: Map<CommandArgumentNode<BotCommandContext, *>, Any>,
+    override val arguments: Map<CommandArgument<BotCommandContext, *>, Any>,
     override val rawArguments: List<String>
 ): CommandContext<BotCommandContext> {
     public val user: StatelessUser by lazy { StatelessUser(client, userId) }

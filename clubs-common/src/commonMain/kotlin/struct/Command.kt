@@ -5,7 +5,7 @@ import kotlinx.coroutines.sync.Mutex
 public open class Command<S : CommandContext<S>>(
     public val names: List<String>,
 ): CommandNode<S>(names.first()) {
-    public open var usage: (suspend S.() -> Unit)? = { send("Malformed command") }
+    public open var usage: (suspend S.() -> Unit)? = null
 
     internal var executionMutex: Mutex? = Mutex()
     @PublishedApi

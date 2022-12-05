@@ -4,7 +4,7 @@ import dev.gaabriel.clubs.bot.BotClubsInstance
 import dev.gaabriel.clubs.bot.event.CommandExecuteEvent
 import dev.gaabriel.clubs.common.parser.CommandCall
 import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandArgumentNode
+import dev.gaabriel.clubs.common.struct.CommandArgument
 import dev.gaabriel.clubs.common.struct.CommandNode
 import io.github.deck.common.log.debug
 import io.github.deck.common.log.error
@@ -12,8 +12,10 @@ import io.github.deck.common.log.info
 import io.github.deck.core.event.message.MessageCreateEvent
 import kotlin.system.measureTimeMillis
 
-public fun interface BotCommandHandler {
+public interface BotCommandHandler {
     public suspend fun execute(call: CommandCall, event: MessageCreateEvent)
+
+    public suspend fun execute(call: CommandCall, context: BotCommandContext)
 }
 
 @Suppress("unchecked_cast")
@@ -28,14 +30,16 @@ public class DefaultBotCommandHandler(private val clubs: BotClubsInstance): BotC
             message = event.message,
             command = call.root as Command<BotCommandContext>,
             node = call.node as CommandNode<BotCommandContext>,
-            arguments = call.arguments as Map<CommandArgumentNode<BotCommandContext, *>, Any>,
+            arguments = call.arguments as Map<CommandArgument<BotCommandContext, *>, Any>,
             rawArguments = call.rawArguments
         )
     }
 
     override suspend fun execute(call: CommandCall, event: MessageCreateEvent) {
-        val context = contextBuilder(call, event) ?: return
+        execute(call, contextBuilder(call, event) ?: return)
+    }
 
+    override suspend fun execute(call: CommandCall, context: BotCommandContext) {
         val executionLog = "[Clubs] Now proceeding to execute command `${context.command.officialName}` in node `${context.node.name ?: "<unnamed>"}`"
         clubs.logger?.debug { executionLog }
         if (!context.node.isExecutable) {
@@ -54,8 +58,8 @@ public class DefaultBotCommandHandler(private val clubs: BotClubsInstance): BotC
         clubs.logger?.info { "[Clubs] Command `${context.command.officialName}` executed in ${executionTime}ms" }
 
         val executionEvent = CommandExecuteEvent(
-            client = event.client,
-            barebones = event.barebones,
+            client = context.event.client,
+            barebones = context.event.barebones,
             clubs = clubs,
             call = call,
             context = context,

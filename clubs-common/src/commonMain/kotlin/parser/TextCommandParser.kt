@@ -40,19 +40,21 @@ public open class TextCommandParser(
     }
 
     protected fun getCommandCall(root: Command<*>, arguments: List<String>): CommandCall? {
-        if (root.children.isEmpty())
+        if (root.children.isEmpty() && root.delegatedArguments.isEmpty())
             return CommandCall(root, root, emptyMap(), arguments)
         val stringReader = StringReader(arguments)
 
-        val (node, argumentValues) = scanCallAndStoreArguments(root, stringReader) ?: return null
+        val argumentValues = mutableMapOf<CommandArgument<*, *>, Any>()
+        val node = scanCallAndStoreArguments(root, stringReader, argumentValues) ?: return null
         return CommandCall(root, node, argumentValues, arguments)
     }
 
-    protected fun scanCallAndStoreArguments(command: Command<*>, reader: StringReader): Pair<CommandNode<*>, Map<CommandArgumentNode<*, *>, Any>>? {
-        val arguments = mutableMapOf<CommandArgumentNode<*, *>, Any>()
+    protected fun scanCallAndStoreArguments(command: Command<*>, reader: StringReader, arguments: MutableMap<CommandArgument<*, *>, Any>): CommandNode<*>? {
+        if (!reader.hasMore && command.delegatedArguments.isNotEmpty())
+            throw CommandParsingException(dictionary.getEntry(ClubsDictionary.REQUIRED_ARGUMENT_NOT_PROVIDED, command.delegatedArguments.first().type.name))
 
         var currentNode: CommandNode<*> = command
-        while (reader.hasMore && currentNode.children.isNotEmpty()) {
+        while (reader.hasMore) {
             val matchingLiteral =
                 currentNode.children.firstOrNull { it is CommandLiteralNode<*> && it.name.equals(reader.peek(), !caseSensitive) }
 
@@ -62,7 +64,36 @@ public open class TextCommandParser(
                 continue
             }
 
+            var argumentIndex = 0
+            while (argumentIndex < currentNode.delegatedArguments.size) {
+                val argument = currentNode.delegatedArguments[argumentIndex]
+                argumentIndex++
+
+                when {
+                    argument is DelegatedArgument.Required<*, *> && !reader.hasMore -> {
+                        throw CommandParsingException(dictionary.getEntry(ClubsDictionary.REQUIRED_ARGUMENT_NOT_PROVIDED, argument.type.name))
+                    }
+                    argument is DelegatedArgument.Optional<*, *> && !reader.hasMore -> {
+                        continue
+                    }
+                    argument is DelegatedArgument.Optional<*, *> && !argument.type.isParseable(reader) -> {
+                        continue
+                    }
+                }
+
+                if (!argument.type.isParseable(reader)) {
+                    throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, argument.type.name, reader.peek()))
+                }
+                arguments[argument] = argument.type.parse(reader, dictionary)
+            }
+
+            if (currentNode.children.isEmpty())
+                break
+
             val argumentNodes = currentNode.children.filterIsInstance<CommandArgumentNode<*, *>>()
+            if (argumentNodes.isEmpty())
+                continue
+
             if (argumentNodes.size == 1) {
                 val argumentFound = argumentNodes.first()
                 if (!argumentFound.type.isParseable(reader)) {
@@ -77,6 +108,6 @@ public open class TextCommandParser(
             arguments[validArgumentNode] = validArgumentNode.type.parse(reader, dictionary)
             currentNode = validArgumentNode
         }
-        return currentNode to arguments
+        return currentNode
     }
 }

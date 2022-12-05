@@ -1,10 +1,10 @@
 package dev.gaabriel.clubs.common.dictionary
 
 public open class DefaultClubsDictionary: ClubsDictionary {
-    public val entries: HashMap<String, String> = hashMapOf(
+    private val entries: HashMap<String, String> = hashMapOf(
         ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE to "A `{0}` was expected, but `{1}` was found.",
         ClubsDictionary.QUOTE_ARGUMENT_NEVER_CLOSED to "A quote was opened but never closed.",
-
+        ClubsDictionary.REQUIRED_ARGUMENT_NOT_PROVIDED to "An argument of type `{0}` was expected but not provided.",
     )
 
     public var missingEntryMessage: (String) -> String = { key -> "The key `$key` is missing in the `clubs` dictionary." }

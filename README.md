@@ -20,11 +20,15 @@ This is module containing the main functionalities of the framework, it being th
 
 ```kotlin
 val command = genericCommand("repeat", "repeattask") {
-    val message by delegateArgument("message", phrase())
-    val times by delegateArgument("times", integer())
+    // `Message` first, then `times` OR only `times`
+    val message by optionalArgument("message", quote())
+    val times by requiredArgument("times", integer())
+    // `Times` only or `times` and `message`
+    val times by requiredArgument("times", integer())
+    val message by optionalArgument("message", quote())
     executor {
         repeat(times) { count ->
-            send("$message (x$count)")
+            send("${message ?: "No message specified."} (x${count+1})")
         }
     }
 }
@@ -50,8 +54,6 @@ val command = genericCommand("repeat", "repeattask") {
     }
 }
 ```
-
-As one might have noticed, there's no support to optional delegated arguments, but it is something that I have been working on.
 
 This module doesn't do anything on its own, since it does not have a command handler. In other words, it doesn't have a bridge to send and receive content.
 

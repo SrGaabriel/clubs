@@ -15,6 +15,7 @@ public abstract class CommandNode<S : CommandContext<S>>(public open val name: S
     public val isExecutable: Boolean get() = workspace.executor != null
 
     public abstract val command: Command<S>
+    public val delegatedArguments: MutableList<DelegatedArgument<S, *>> = mutableListOf()
 
     public fun executor(executor: suspend S.() -> Unit) {
         workspace.executor = executor
@@ -30,12 +31,16 @@ public abstract class CommandNode<S : CommandContext<S>>(public open val name: S
         workspace.children.add(CommandArgumentNode(command, name, type).apply { scope(this) })
     }
 
-    public fun <T : Any> delegateArgument(name: String? = null, type: ArgumentType<T>, command: Command<S>): DelegatedArgument.Required<S, T> {
-        val argumentNode = CommandArgumentNode(command, name, type)
-        workspace.children.add(argumentNode)
-        workspace.workingArgument = argumentNode
-        workingArgument = argumentNode
-        return DelegatedArgument.Required(command, argumentNode)
+    public fun <T : Any> requiredArgument(name: String? = null, type: ArgumentType<T>): DelegatedArgument.Required<S, T> {
+        val argument = DelegatedArgument.Required<S, T>(name, type)
+        delegatedArguments.add(argument)
+        return argument
+    }
+
+    public fun <T : Any> optionalArgument(name: String? = null, type: ArgumentType<T>): DelegatedArgument.Optional<S, T> {
+        val argument = DelegatedArgument.Optional<S, T>(name, type)
+        delegatedArguments.add(argument)
+        return argument
     }
 
     public fun selector(options: List<String>, scope: CommandLiteralNode<S>.(String) -> Unit) {
@@ -64,7 +69,15 @@ public abstract class CommandNode<S : CommandContext<S>>(public open val name: S
         ReadOnlyProperty { _, _ ->
             val context =
                 command.currentContext ?: error("Tried to delegate argument value while not in a command context")
-            context.arguments[this.node] as T
+            context.arguments[this] as T
+        }
+
+    public inline operator fun <reified T : Any> DelegatedArgument.Optional<S, T>.provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, T?> =
+        ReadOnlyProperty { _, _ ->
+            val context =
+                command.currentContext ?: error("Tried to delegate argument value while not in a command context")
+            val value = context.arguments[this] ?: return@ReadOnlyProperty null
+            value as T
         }
 }
 
@@ -74,15 +87,11 @@ public data class CommandLiteralNode<S : CommandContext<S>>(override val command
 public class CommandArgumentNode<S : CommandContext<S>, T : Any>(
     override val command: Command<S>,
     name: String?,
-    public val type: ArgumentType<T>,
-): CommandNode<S>(name) {
+    override val type: ArgumentType<T>,
+): CommandNode<S>(name), CommandArgument<S, T> {
     override fun equals(other: Any?): Boolean = other === this
 
     override fun hashCode(): Int {
         return javaClass.hashCode()
     }
-}
-
-public sealed class DelegatedArgument<S : CommandContext<S>, T : Any>(public val command: Command<S>, public val node: CommandArgumentNode<S, T>) {
-    public class Required<S : CommandContext<S>, T : Any>(command: Command<S>, node: CommandArgumentNode<S, T>): DelegatedArgument<S, T>(command, node)
 }

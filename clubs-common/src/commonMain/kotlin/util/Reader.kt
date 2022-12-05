@@ -2,6 +2,7 @@ package dev.gaabriel.clubs.common.util
 
 public data class StringReader(public val content: List<String>) {
     public var index: Int = 0
+    public val remaining: Int get() = content.size - index
 
     public val hasMore: Boolean get() = !isEnd()
 
