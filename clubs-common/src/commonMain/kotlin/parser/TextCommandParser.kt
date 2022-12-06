@@ -50,7 +50,7 @@ public open class TextCommandParser(
     }
 
     protected fun scanCallAndStoreArguments(command: Command<*>, reader: StringReader, arguments: MutableMap<CommandArgument<*, *>, Any>): CommandNode<*>? {
-        if (!reader.hasMore && command.delegatedArguments.isNotEmpty())
+        if (!reader.hasMore && command.delegatedArguments.filterIsInstance<DelegatedArgument.Required<*, *>>().isNotEmpty())
             throw CommandParsingException(dictionary.getEntry(ClubsDictionary.REQUIRED_ARGUMENT_NOT_PROVIDED, command.delegatedArguments.first().type.name))
 
         var currentNode: CommandNode<*> = command
