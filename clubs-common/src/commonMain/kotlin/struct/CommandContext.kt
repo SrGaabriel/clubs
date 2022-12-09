@@ -1,9 +1,11 @@
 package dev.gaabriel.clubs.common.struct
 
+import dev.gaabriel.clubs.common.util.ArgumentMap
+
 public interface CommandContext<S : CommandContext<S>> {
     public val command: Command<S>
     public val node: CommandNode<S>
-    public val arguments: Map<CommandArgument<S, *>, Any>
+    public val arguments: ArgumentMap
     public val rawArguments: List<String>
 
     public suspend fun send(message: String): Any

@@ -97,7 +97,7 @@ public data class CommandLiteralNode<S : CommandContext<S>>(override val name: S
 public class CommandArgumentNode<S : CommandContext<S>, T : Any>(
     name: String?,
     override val type: ArgumentType<T>,
-): CommandNode<S>(name), CommandArgument<S, T> {
+): CommandNode<S>(name), CommandArgument<T> {
     override fun equals(other: Any?): Boolean = other === this
 
     override fun hashCode(): Int {

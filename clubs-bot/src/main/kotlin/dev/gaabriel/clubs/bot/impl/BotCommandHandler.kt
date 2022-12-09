@@ -4,7 +4,6 @@ import dev.gaabriel.clubs.bot.BotClubsInstance
 import dev.gaabriel.clubs.bot.event.CommandExecuteEvent
 import dev.gaabriel.clubs.common.parser.CommandCall
 import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandArgument
 import dev.gaabriel.clubs.common.struct.CommandNode
 import io.github.deck.common.log.debug
 import io.github.deck.common.log.error
@@ -18,8 +17,8 @@ public interface BotCommandHandler {
     public suspend fun execute(call: CommandCall, context: BotCommandContext)
 }
 
-@Suppress("unchecked_cast")
 public class DefaultBotCommandHandler(private val clubs: BotClubsInstance): BotCommandHandler {
+    @Suppress("unchecked_cast")
     public var contextBuilder: (CommandCall, MessageCreateEvent) -> BotCommandContext? = { call, event ->
         BotCommandContext(
             client = event.client,
@@ -30,7 +29,7 @@ public class DefaultBotCommandHandler(private val clubs: BotClubsInstance): BotC
             message = event.message,
             command = call.root as Command<BotCommandContext>,
             node = call.node as CommandNode<BotCommandContext>,
-            arguments = call.arguments as Map<CommandArgument<BotCommandContext, *>, Any>,
+            arguments = call.arguments,
             rawArguments = call.rawArguments
         )
     }

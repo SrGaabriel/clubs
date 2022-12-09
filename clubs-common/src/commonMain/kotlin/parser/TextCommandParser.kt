@@ -4,6 +4,7 @@ import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
 import dev.gaabriel.clubs.common.exception.CommandParsingException
 import dev.gaabriel.clubs.common.repository.CommandRepository
 import dev.gaabriel.clubs.common.struct.*
+import dev.gaabriel.clubs.common.util.MutableArgumentMap
 import dev.gaabriel.clubs.common.util.StringReader
 import io.github.reactivecircus.cache4k.Cache
 import kotlin.time.Duration.Companion.minutes
@@ -44,14 +45,16 @@ public open class TextCommandParser(
             return CommandCall(root, root, emptyMap(), arguments)
         val stringReader = StringReader(arguments)
 
-        val argumentValues = mutableMapOf<CommandArgument<*, *>, Any>()
+        val argumentValues = mutableMapOf<CommandArgument<*>, Any>()
         val node = scanCallAndStoreArguments(root, stringReader, argumentValues) ?: return null
         return CommandCall(root, node, argumentValues, arguments)
     }
 
-    protected fun scanCallAndStoreArguments(command: Command<*>, reader: StringReader, arguments: MutableMap<CommandArgument<*, *>, Any>): CommandNode<*>? {
-        if (!reader.hasMore && command.delegatedArguments.filterIsInstance<DelegatedArgument.Required<*, *>>().isNotEmpty())
-            throw CommandParsingException(dictionary.getEntry(ClubsDictionary.REQUIRED_ARGUMENT_NOT_PROVIDED, command.delegatedArguments.first().type.name))
+    protected fun scanCallAndStoreArguments(command: Command<*>, reader: StringReader, arguments: MutableArgumentMap): CommandNode<*>? {
+        if (!reader.hasMore && command.delegatedArguments.filterIsInstance<DelegatedArgument.Required<*, *>>().isNotEmpty()) {
+            val firstArgument = command.delegatedArguments.first()
+            throw CommandParsingException.RequiredArgumentNotProvided(dictionary, firstArgument)
+        }
 
         var currentNode: CommandNode<*> = command
         while (reader.hasMore) {
@@ -71,18 +74,20 @@ public open class TextCommandParser(
 
                 when {
                     argument is DelegatedArgument.Required<*, *> && !reader.hasMore -> {
-                        throw CommandParsingException(dictionary.getEntry(ClubsDictionary.REQUIRED_ARGUMENT_NOT_PROVIDED, argument.type.name))
+                        throw CommandParsingException.RequiredArgumentNotProvided(dictionary, argument)
                     }
                     argument is DelegatedArgument.Optional<*, *> && !reader.hasMore -> {
                         continue
                     }
                     argument is DelegatedArgument.Optional<*, *> && !argument.type.isParseable(reader) -> {
+                        if (currentNode.delegatedArguments.size == 1)
+                            throw CommandParsingException.UnexpectedArgumentType(dictionary, argument, reader.peek())
                         continue
                     }
                 }
 
                 if (!argument.type.isParseable(reader)) {
-                    throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, argument.type.name, reader.peek()))
+                    throw CommandParsingException.UnexpectedArgumentType(dictionary, argument, reader.peek())
                 }
                 arguments[argument] = argument.type.parse(reader, dictionary)
             }
@@ -97,7 +102,7 @@ public open class TextCommandParser(
             if (argumentNodes.size == 1) {
                 val argumentFound = argumentNodes.first()
                 if (!argumentFound.type.isParseable(reader)) {
-                    throw CommandParsingException(dictionary.getEntry(ClubsDictionary.UNEXPECTED_ARGUMENT_TYPE, argumentFound.type.name, reader.peek()))
+                    throw CommandParsingException.UnexpectedArgumentType(dictionary, argumentFound, reader.peek())
                 }
                 arguments[argumentFound] = argumentFound.type.parse(reader, dictionary)
                 currentNode = argumentFound

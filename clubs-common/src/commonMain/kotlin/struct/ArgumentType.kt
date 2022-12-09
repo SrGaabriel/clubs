@@ -6,7 +6,7 @@ import dev.gaabriel.clubs.common.util.StringReader
 
 public abstract class ArgumentType<T>(
     public val name: String,
-    public val greedy: Boolean = false,
+    public val greedy: Boolean = false
 ) {
     public abstract fun parse(reader: StringReader, dictionary: ClubsDictionary): T
 
@@ -69,11 +69,11 @@ public abstract class ArgumentType<T>(
             override fun parse(reader: StringReader, dictionary: ClubsDictionary): String = reader.next()
         }
 
-        public object Quote : Text("Quote") {
+        public object Quote : Text("Quote", greedy = true) {
+            private val regex = Regex("^\".+\"(?!\\S)(.+|)")
+
             override fun isParseable(reader: StringReader): Boolean =
-                reader.peekRemaining().let {
-                    it.startsWith('"') && it.count { digit -> digit == '"' } > 1
-                }
+                reader.peekRemaining() matches regex
 
             override fun parse(reader: StringReader, dictionary: ClubsDictionary): String {
                 return reader.readUntilInclusiveOrNull { it.endsWith('"') }?.drop(1)?.dropLast(1)
