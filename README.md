@@ -6,9 +6,9 @@
 
 A simple and versatile command framework to improve command experience in `Guilded` in an elegant way.
 
-The default implementation of the `common` module is the `bot` one, which uses [deck](https://github.com/SrGaabriel/deck/) to communicate with Guilded's Bot API.
+The default implementation of the `common` module is `bot`, which uses [deck](https://github.com/SrGaabriel/deck/) to communicate with Guilded's Bot API.
 
-## Documentation
+## Usage
 
 There's no official documentation, but you can find some examples below.
 
@@ -83,7 +83,7 @@ Unfortunately, this module doesn't support specific-platform types, such as `cha
 
 ## Implementation
 
-To use `clubs` in your project, you only need to add this to your `build.gradle.kts`:
+To use clubs you need to import the ´jitpack` repository
 
 ```kotlin
 repositories {
@@ -91,7 +91,7 @@ repositories {
 }
 ```
 
-Then in your dependencies:
+And add the desired clubs artifact in your dependencies scope 
 
 ```kotlin
 dependencies {
