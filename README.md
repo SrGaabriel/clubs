@@ -1,6 +1,6 @@
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/SrGaabriel/clubs/Build)
-![GitHub issues](https://img.shields.io/github/issues/SrGaabriel/clubs)
-![GitHub Repo stars](https://img.shields.io/github/stars/SrGaabriel/clubs)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/SrGaabriel/clubs/gradle.yml?branch=development&style=for-the-badge)
+![GitHub issues](https://img.shields.io/github/issues/SrGaabriel/clubs?style=for-the-badge)
+![GitHub Repo stars](https://img.shields.io/github/stars/SrGaabriel/clubs?style=for-the-badge)
 
 # ♣️ clubs
 
