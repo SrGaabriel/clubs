@@ -1,19 +1,19 @@
 package io.github.srgaabriel.clubs.bot.impl
 
-import io.github.deck.common.EmbedBuilder
-import io.github.deck.common.util.GenericId
-import io.github.deck.core.DeckClient
-import io.github.deck.core.entity.Message
-import io.github.deck.core.event.message.MessageCreateEvent
-import io.github.deck.core.stateless.StatelessServer
-import io.github.deck.core.stateless.StatelessUser
-import io.github.deck.core.stateless.channel.StatelessMessageChannel
-import io.github.deck.core.util.*
-import io.github.deck.rest.builder.SendMessageRequestBuilder
 import io.github.srgaabriel.clubs.common.struct.Command
 import io.github.srgaabriel.clubs.common.struct.CommandContext
 import io.github.srgaabriel.clubs.common.struct.CommandNode
 import io.github.srgaabriel.clubs.common.util.ArgumentMap
+import io.github.srgaabriel.deck.common.EmbedBuilder
+import io.github.srgaabriel.deck.common.util.GenericId
+import io.github.srgaabriel.deck.core.DeckClient
+import io.github.srgaabriel.deck.core.entity.Message
+import io.github.srgaabriel.deck.core.event.message.MessageCreateEvent
+import io.github.srgaabriel.deck.core.stateless.StatelessServer
+import io.github.srgaabriel.deck.core.stateless.StatelessUser
+import io.github.srgaabriel.deck.core.stateless.channel.StatelessMessageChannel
+import io.github.srgaabriel.deck.core.util.*
+import io.github.srgaabriel.deck.rest.builder.SendMessageRequestBuilder
 import java.util.*
 
 public open class BotCommandContext(

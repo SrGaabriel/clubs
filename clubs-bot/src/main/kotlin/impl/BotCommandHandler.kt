@@ -1,14 +1,14 @@
 package io.github.srgaabriel.clubs.bot.impl
 
-import io.github.deck.common.log.debug
-import io.github.deck.common.log.error
-import io.github.deck.common.log.info
-import io.github.deck.core.event.message.MessageCreateEvent
 import io.github.srgaabriel.clubs.bot.BotClubsInstance
 import io.github.srgaabriel.clubs.bot.event.CommandExecuteEvent
 import io.github.srgaabriel.clubs.common.parser.CommandCall
 import io.github.srgaabriel.clubs.common.struct.Command
 import io.github.srgaabriel.clubs.common.struct.CommandNode
+import io.github.srgaabriel.deck.common.log.debug
+import io.github.srgaabriel.deck.common.log.error
+import io.github.srgaabriel.deck.common.log.info
+import io.github.srgaabriel.deck.core.event.message.MessageCreateEvent
 import kotlin.system.measureTimeMillis
 
 public interface BotCommandHandler {

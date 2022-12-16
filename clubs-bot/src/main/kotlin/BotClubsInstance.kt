@@ -1,8 +1,5 @@
 package io.github.srgaabriel.clubs.bot
 
-import io.github.deck.common.log.DeckLogger
-import io.github.deck.core.DeckClient
-import io.github.deck.core.event.message.MessageCreateEvent
 import io.github.reactivecircus.cache4k.Cache
 import io.github.srgaabriel.clubs.bot.impl.*
 import io.github.srgaabriel.clubs.bot.util.PrefixProvider
@@ -18,6 +15,9 @@ import io.github.srgaabriel.clubs.common.repository.CommandRepository
 import io.github.srgaabriel.clubs.common.repository.DefaultCommandRepository
 import io.github.srgaabriel.clubs.common.struct.Command
 import io.github.srgaabriel.clubs.common.struct.CommandContext
+import io.github.srgaabriel.deck.common.log.DeckLogger
+import io.github.srgaabriel.deck.core.DeckClient
+import io.github.srgaabriel.deck.core.event.message.MessageCreateEvent
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
