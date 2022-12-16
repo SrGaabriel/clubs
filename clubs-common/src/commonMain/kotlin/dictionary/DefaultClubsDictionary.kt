@@ -1,4 +1,4 @@
-package dev.gaabriel.clubs.common.dictionary
+package io.github.srgaabriel.clubs.common.dictionary
 
 public open class DefaultClubsDictionary: ClubsDictionary {
     private val entries: HashMap<String, (List<String>) -> String> = hashMapOf()

@@ -2,19 +2,31 @@ plugins {
     `maven-publish`
 }
 
-tasks {
-    publishing {
-        publications {
-            create<MavenPublication>("Clubs") {
-                groupId = "dev.gaabriel.clubs"
-                artifactId = project.name
-                version = Library.Version
-                from(components["kotlin"])
+publishing {
+    publications.withType<MavenPublication> {
+        pom {
+            name.set("Clubs")
+            description.set("A flexible and powerful command framework with default Guilded API implementations using deck.")
+            url.set(Library.Url)
 
-                pom {
-                    name.set("Clubs")
-                    description.set("A flexible and powerful command framework with default Guilded API implementations using deck. ")
+            developers {
+                developer {
+                    name.set("SrGaabriel")
+                    email.set("srgaabriel@protonmail.com")
                 }
+            }
+
+            licenses {
+                license {
+                    name.set("MIT")
+                    url.set("https://opensource.org/licenses/mit-license.php")
+                }
+            }
+
+            scm {
+                connection.set("scm:git:git://github.com/SrGaabriel/clubs.git")
+                developerConnection.set("scm:git:ssh://github.com:SrGaabriel/clubs.git")
+                url.set("https://github.com/SrGaabriel/clubs")
             }
         }
     }

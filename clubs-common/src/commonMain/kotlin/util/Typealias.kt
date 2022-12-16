@@ -1,6 +1,6 @@
-package dev.gaabriel.clubs.common.util
+package io.github.srgaabriel.clubs.common.util
 
-import dev.gaabriel.clubs.common.struct.CommandArgument
+import io.github.srgaabriel.clubs.common.struct.CommandArgument
 
 public typealias ArgumentMap = Map<CommandArgument<*>, Any>
 

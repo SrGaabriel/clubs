@@ -1,6 +1,6 @@
-package dev.gaabriel.clubs.common.repository
+package io.github.srgaabriel.clubs.common.repository
 
-import dev.gaabriel.clubs.common.struct.Command
+import io.github.srgaabriel.clubs.common.struct.Command
 
 public interface CommandRepository {
     public fun register(command: Command<*>)

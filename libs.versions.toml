@@ -1,9 +1,14 @@
 [versions]
+kotlin = "1.7.21"
+
 deck = "0.7.2"
 
 mockk = "1.12.5"
 cache4k = "0.7.0"
 coroutines = "1.6.4"
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
 [libraries]
 deck-core = { module = "com.github.SrGaabriel.deck:deck-core", version.ref = "deck" }

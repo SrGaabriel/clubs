@@ -1,7 +1,7 @@
-package dev.gaabriel.clubs.common.struct
+package io.github.srgaabriel.clubs.common.struct
 
 public open class Command<S : CommandContext<S>>(
-    public val names: List<String>,
+    public val names: List<String>
 ): CommandNode<S>(names.first()) {
     public open var usage: (suspend S.() -> Unit)? = null
 

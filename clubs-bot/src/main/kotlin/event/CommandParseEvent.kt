@@ -1,13 +1,13 @@
-package dev.gaabriel.clubs.bot.event
+package io.github.srgaabriel.clubs.bot.event
 
-import dev.gaabriel.clubs.bot.BotClubsInstance
-import dev.gaabriel.clubs.common.parser.CommandCall
-import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandNode
-import dev.gaabriel.clubs.common.util.ArgumentMap
 import io.github.deck.core.DeckClient
 import io.github.deck.core.event.DeckEvent
 import io.github.deck.gateway.event.GatewayEvent
+import io.github.srgaabriel.clubs.bot.BotClubsInstance
+import io.github.srgaabriel.clubs.common.parser.CommandCall
+import io.github.srgaabriel.clubs.common.struct.Command
+import io.github.srgaabriel.clubs.common.struct.CommandNode
+import io.github.srgaabriel.clubs.common.util.ArgumentMap
 
 public data class CommandParseEvent(
     override val client: DeckClient,

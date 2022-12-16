@@ -1,12 +1,12 @@
 @file:Suppress("UnusedReceiverParameter", "NOTHING_TO_INLINE")
 @file:OptIn(ExperimentalContracts::class)
 
-package dev.gaabriel.clubs.common.util
+package io.github.srgaabriel.clubs.common.util
 
-import dev.gaabriel.clubs.common.struct.ArgumentType
-import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandArgumentNode
-import dev.gaabriel.clubs.common.struct.CommandContext
+import io.github.srgaabriel.clubs.common.struct.ArgumentType
+import io.github.srgaabriel.clubs.common.struct.Command
+import io.github.srgaabriel.clubs.common.struct.CommandArgumentNode
+import io.github.srgaabriel.clubs.common.struct.CommandContext
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract

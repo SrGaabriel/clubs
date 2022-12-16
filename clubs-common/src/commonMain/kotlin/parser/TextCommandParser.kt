@@ -1,12 +1,12 @@
-package dev.gaabriel.clubs.common.parser
+package io.github.srgaabriel.clubs.common.parser
 
-import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
-import dev.gaabriel.clubs.common.exception.CommandParsingException
-import dev.gaabriel.clubs.common.repository.CommandRepository
-import dev.gaabriel.clubs.common.struct.*
-import dev.gaabriel.clubs.common.util.MutableArgumentMap
-import dev.gaabriel.clubs.common.util.StringReader
 import io.github.reactivecircus.cache4k.Cache
+import io.github.srgaabriel.clubs.common.dictionary.ClubsDictionary
+import io.github.srgaabriel.clubs.common.exception.CommandParsingException
+import io.github.srgaabriel.clubs.common.repository.CommandRepository
+import io.github.srgaabriel.clubs.common.struct.*
+import io.github.srgaabriel.clubs.common.util.MutableArgumentMap
+import io.github.srgaabriel.clubs.common.util.StringReader
 import kotlin.time.Duration.Companion.minutes
 
 public open class TextCommandParser(
@@ -53,7 +53,7 @@ public open class TextCommandParser(
     protected fun scanCallAndStoreArguments(command: Command<*>, reader: StringReader, arguments: MutableArgumentMap): CommandNode<*>? {
         if (!reader.hasMore && command.delegatedArguments.filterIsInstance<DelegatedArgument.Required<*, *>>().isNotEmpty()) {
             val firstArgument = command.delegatedArguments.first()
-            throw CommandParsingException.RequiredArgumentNotProvided(dictionary, firstArgument)
+            throw CommandParsingException.RequiredArgumentNotProvided(firstArgument)
         }
 
         var currentNode: CommandNode<*> = command
@@ -74,20 +74,20 @@ public open class TextCommandParser(
 
                 when {
                     argument is DelegatedArgument.Required<*, *> && !reader.hasMore -> {
-                        throw CommandParsingException.RequiredArgumentNotProvided(dictionary, argument)
+                        throw CommandParsingException.RequiredArgumentNotProvided(argument)
                     }
                     argument is DelegatedArgument.Optional<*, *> && !reader.hasMore -> {
                         continue
                     }
                     argument is DelegatedArgument.Optional<*, *> && !argument.type.isParseable(reader) -> {
                         if (currentNode.delegatedArguments.size == 1)
-                            throw CommandParsingException.UnexpectedArgumentType(dictionary, argument, reader.peek())
+                            throw CommandParsingException.UnexpectedArgumentType(argument, reader.peek())
                         continue
                     }
                 }
 
                 if (!argument.type.isParseable(reader)) {
-                    throw CommandParsingException.UnexpectedArgumentType(dictionary, argument, reader.peek())
+                    throw CommandParsingException.UnexpectedArgumentType(argument, reader.peek())
                 }
                 arguments[argument] = argument.type.parse(reader, dictionary)
             }
@@ -102,14 +102,14 @@ public open class TextCommandParser(
             if (argumentNodes.size == 1) {
                 val argumentFound = argumentNodes.first()
                 if (!argumentFound.type.isParseable(reader)) {
-                    throw CommandParsingException.UnexpectedArgumentType(dictionary, argumentFound, reader.peek())
+                    throw CommandParsingException.UnexpectedArgumentType(argumentFound, reader.peek())
                 }
                 arguments[argumentFound] = argumentFound.type.parse(reader, dictionary)
                 currentNode = argumentFound
                 continue
             }
 
-            val validArgumentNode = argumentNodes.firstOrNull { it.type.isParseable(reader) } ?: return null
+            val validArgumentNode = argumentNodes.asSequence().filter { it.type.isParseable(reader) }.maxByOrNull { it.children.size } ?: return null
             arguments[validArgumentNode] = validArgumentNode.type.parse(reader, dictionary)
             currentNode = validArgumentNode
         }

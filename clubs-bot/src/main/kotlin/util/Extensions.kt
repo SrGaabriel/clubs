@@ -1,9 +1,9 @@
-package dev.gaabriel.clubs.bot.util
+package io.github.srgaabriel.clubs.bot.util
 
-import dev.gaabriel.clubs.bot.BotClubsInstance
-import dev.gaabriel.clubs.bot.impl.BotCommandContext
-import dev.gaabriel.clubs.common.struct.Command
 import io.github.deck.core.event.message.MessageCreateEvent
+import io.github.srgaabriel.clubs.bot.BotClubsInstance
+import io.github.srgaabriel.clubs.bot.impl.BotCommandContext
+import io.github.srgaabriel.clubs.common.struct.Command
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract

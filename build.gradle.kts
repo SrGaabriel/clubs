@@ -1,12 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm")
     `maven-publish`
 }
 
 subprojects {
-    group = "dev.gaabriel.clubs"
+    group = Library.Group
     version = Library.Version
     apply<MavenPublishPlugin>()
 

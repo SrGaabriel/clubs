@@ -1,3 +1,3 @@
-package dev.gaabriel.clubs.common.struct
+package io.github.srgaabriel.clubs.common.struct
 
 public abstract class BaseCommandContext private constructor(): CommandContext<BaseCommandContext>

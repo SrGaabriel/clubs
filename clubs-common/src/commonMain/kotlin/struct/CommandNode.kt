@@ -1,5 +1,6 @@
-package dev.gaabriel.clubs.common.struct
+package io.github.srgaabriel.clubs.common.struct
 
+import io.github.srgaabriel.clubs.common.annotation.ClubsDelicateApi
 import kotlinx.coroutines.sync.Mutex
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -11,6 +12,7 @@ public abstract class CommandNode<S : CommandContext<S>>(public open val name: S
     private var executionMutex: Mutex? = Mutex()
     @PublishedApi
     internal var currentContext: S? = null
+    @ClubsDelicateApi
     public var synchronized: Boolean
         get() = executionMutex != null
         set(value) {
@@ -32,12 +34,12 @@ public abstract class CommandNode<S : CommandContext<S>>(public open val name: S
 
     public fun literal(vararg names: String, scope: CommandLiteralNode<S>.() -> Unit) {
         for (name in names) {
-            children.add(CommandLiteralNode<S>(name).also { it.synchronized = this.synchronized }.apply(scope))
+            children.add(CommandLiteralNode<S>(name).inheritTraits().apply(scope))
         }
     }
 
     public fun <T : Any> argument(name: String? = null, type: ArgumentType<T>, scope: CommandArgumentNode<S, T>.(CommandArgumentNode<S, T>) -> Unit) {
-        children.add(CommandArgumentNode<S, T>(name, type).also { it.synchronized = this.synchronized }.apply { scope(this) })
+        children.add(CommandArgumentNode<S, T>(name, type).inheritTraits().apply { scope(this) })
     }
 
     public fun <T : Any> requiredArgument(name: String? = null, type: ArgumentType<T>): DelegatedArgument.Required<S, T> {
@@ -90,9 +92,20 @@ public abstract class CommandNode<S : CommandContext<S>>(public open val name: S
             val value = context.arguments[this] ?: return@ReadOnlyProperty null
             value as T
         }
+
+    @OptIn(ClubsDelicateApi::class)
+    private fun <T : CommandNode<S>> T.inheritTraits() = apply {
+        this@inheritTraits.synchronized = this@CommandNode.synchronized
+    }
 }
 
-public data class CommandLiteralNode<S : CommandContext<S>>(override val name: String): CommandNode<S>(name)
+public data class CommandLiteralNode<S : CommandContext<S>>(override val name: String): CommandNode<S>(name) {
+    override fun equals(other: Any?): Boolean = other === this
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
 
 public class CommandArgumentNode<S : CommandContext<S>, T : Any>(
     name: String?,

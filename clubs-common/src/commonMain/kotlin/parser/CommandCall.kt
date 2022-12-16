@@ -1,8 +1,8 @@
-package dev.gaabriel.clubs.common.parser
+package io.github.srgaabriel.clubs.common.parser
 
-import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandNode
-import dev.gaabriel.clubs.common.util.ArgumentMap
+import io.github.srgaabriel.clubs.common.struct.Command
+import io.github.srgaabriel.clubs.common.struct.CommandNode
+import io.github.srgaabriel.clubs.common.util.ArgumentMap
 
 public data class CommandCall(
     val root: Command<*>,

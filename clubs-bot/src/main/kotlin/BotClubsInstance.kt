@@ -1,21 +1,23 @@
-package dev.gaabriel.clubs.bot
+package io.github.srgaabriel.clubs.bot
 
-import dev.gaabriel.clubs.bot.impl.*
-import dev.gaabriel.clubs.bot.util.PrefixProvider
-import dev.gaabriel.clubs.common.ClubsInstance
-import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
-import dev.gaabriel.clubs.common.dictionary.DefaultClubsDictionary
-import dev.gaabriel.clubs.common.parser.CommandCall
-import dev.gaabriel.clubs.common.parser.CommandParser
-import dev.gaabriel.clubs.common.parser.TextCommandParser
-import dev.gaabriel.clubs.common.repository.CommandRepository
-import dev.gaabriel.clubs.common.repository.DefaultCommandRepository
-import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandContext
 import io.github.deck.common.log.DeckLogger
 import io.github.deck.core.DeckClient
 import io.github.deck.core.event.message.MessageCreateEvent
 import io.github.reactivecircus.cache4k.Cache
+import io.github.srgaabriel.clubs.bot.impl.*
+import io.github.srgaabriel.clubs.bot.util.PrefixProvider
+import io.github.srgaabriel.clubs.common.ClubsInstance
+import io.github.srgaabriel.clubs.common.dictionary.ClubsDictionary
+import io.github.srgaabriel.clubs.common.dictionary.DefaultClubsDictionary
+import io.github.srgaabriel.clubs.common.dictionary.DefaultErrorHandler
+import io.github.srgaabriel.clubs.common.dictionary.ErrorHandler
+import io.github.srgaabriel.clubs.common.parser.CommandCall
+import io.github.srgaabriel.clubs.common.parser.CommandParser
+import io.github.srgaabriel.clubs.common.parser.TextCommandParser
+import io.github.srgaabriel.clubs.common.repository.CommandRepository
+import io.github.srgaabriel.clubs.common.repository.DefaultCommandRepository
+import io.github.srgaabriel.clubs.common.struct.Command
+import io.github.srgaabriel.clubs.common.struct.CommandContext
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -32,6 +34,7 @@ public class BotClubsInstance: ClubsInstance<DeckClient> {
 
     public var dictionary: ClubsDictionary by parser::dictionary
     public var repository: CommandRepository by parser::repository
+    public var errorHandler: ErrorHandler = DefaultErrorHandler()
 
     public var caseSensitive: Boolean by parser::caseSensitive
     public var parsingResultsCache: Cache<String, CommandCall>? by parser::cache

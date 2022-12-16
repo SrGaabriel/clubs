@@ -1,6 +1,6 @@
-package dev.gaabriel.clubs.common.struct
+package io.github.srgaabriel.clubs.common.struct
 
-import dev.gaabriel.clubs.common.util.ArgumentMap
+import io.github.srgaabriel.clubs.common.util.ArgumentMap
 
 public interface CommandContext<S : CommandContext<S>> {
     public val command: Command<S>

@@ -1,8 +1,8 @@
-import dev.gaabriel.clubs.common.parser.TextCommandParser
-import dev.gaabriel.clubs.common.repository.CommandRepository
-import dev.gaabriel.clubs.common.struct.ArgumentType
-import dev.gaabriel.clubs.common.struct.CommandLiteralNode
-import dev.gaabriel.clubs.common.util.*
+import io.github.srgaabriel.clubs.common.parser.TextCommandParser
+import io.github.srgaabriel.clubs.common.repository.CommandRepository
+import io.github.srgaabriel.clubs.common.struct.ArgumentType
+import io.github.srgaabriel.clubs.common.struct.CommandLiteralNode
+import io.github.srgaabriel.clubs.common.util.*
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.Test

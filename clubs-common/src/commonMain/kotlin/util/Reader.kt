@@ -1,4 +1,4 @@
-package dev.gaabriel.clubs.common.util
+package io.github.srgaabriel.clubs.common.util
 
 public data class StringReader(public val content: List<String>) {
     public var index: Int = 0

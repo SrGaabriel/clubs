@@ -1,4 +1,4 @@
-package dev.gaabriel.clubs.common.dictionary
+package io.github.srgaabriel.clubs.common.dictionary
 
 public interface ClubsDictionary {
     public fun getEntry(key: String, vararg args: String?): String

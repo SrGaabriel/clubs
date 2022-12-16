@@ -1,9 +1,5 @@
-package dev.gaabriel.clubs.bot.impl
+package io.github.srgaabriel.clubs.bot.impl
 
-import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandContext
-import dev.gaabriel.clubs.common.struct.CommandNode
-import dev.gaabriel.clubs.common.util.ArgumentMap
 import io.github.deck.common.EmbedBuilder
 import io.github.deck.common.util.GenericId
 import io.github.deck.core.DeckClient
@@ -14,6 +10,10 @@ import io.github.deck.core.stateless.StatelessUser
 import io.github.deck.core.stateless.channel.StatelessMessageChannel
 import io.github.deck.core.util.*
 import io.github.deck.rest.builder.SendMessageRequestBuilder
+import io.github.srgaabriel.clubs.common.struct.Command
+import io.github.srgaabriel.clubs.common.struct.CommandContext
+import io.github.srgaabriel.clubs.common.struct.CommandNode
+import io.github.srgaabriel.clubs.common.util.ArgumentMap
 import java.util.*
 
 public open class BotCommandContext(

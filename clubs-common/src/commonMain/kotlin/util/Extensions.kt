@@ -1,8 +1,8 @@
-package dev.gaabriel.clubs.common.util
+package io.github.srgaabriel.clubs.common.util
 
-import dev.gaabriel.clubs.common.struct.BaseCommandContext
-import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandContext
+import io.github.srgaabriel.clubs.common.struct.BaseCommandContext
+import io.github.srgaabriel.clubs.common.struct.Command
+import io.github.srgaabriel.clubs.common.struct.CommandContext
 
 public fun <S : CommandContext<S>> newCommand(vararg names: String, scope: Command<S>.() -> Unit): Command<S> =
     Command<S>(names.toList()).apply(scope)

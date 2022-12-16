@@ -1,8 +1,8 @@
-package dev.gaabriel.clubs.common.struct
+package io.github.srgaabriel.clubs.common.struct
 
-import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
-import dev.gaabriel.clubs.common.exception.CommandParsingException
-import dev.gaabriel.clubs.common.util.StringReader
+import io.github.srgaabriel.clubs.common.dictionary.ClubsDictionary
+import io.github.srgaabriel.clubs.common.exception.CommandParsingException
+import io.github.srgaabriel.clubs.common.util.StringReader
 
 public abstract class ArgumentType<T>(
     public val name: String,

@@ -1,7 +1,7 @@
-package dev.gaabriel.clubs.common
+package io.github.srgaabriel.clubs.common
 
-import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandContext
+import io.github.srgaabriel.clubs.common.struct.Command
+import io.github.srgaabriel.clubs.common.struct.CommandContext
 
 public interface ClubsInstance<C : Any> {
     /**

@@ -1,14 +1,14 @@
-package dev.gaabriel.clubs.bot.impl
+package io.github.srgaabriel.clubs.bot.impl
 
-import dev.gaabriel.clubs.bot.BotClubsInstance
-import dev.gaabriel.clubs.bot.event.CommandExecuteEvent
-import dev.gaabriel.clubs.common.parser.CommandCall
-import dev.gaabriel.clubs.common.struct.Command
-import dev.gaabriel.clubs.common.struct.CommandNode
 import io.github.deck.common.log.debug
 import io.github.deck.common.log.error
 import io.github.deck.common.log.info
 import io.github.deck.core.event.message.MessageCreateEvent
+import io.github.srgaabriel.clubs.bot.BotClubsInstance
+import io.github.srgaabriel.clubs.bot.event.CommandExecuteEvent
+import io.github.srgaabriel.clubs.common.parser.CommandCall
+import io.github.srgaabriel.clubs.common.struct.Command
+import io.github.srgaabriel.clubs.common.struct.CommandNode
 import kotlin.system.measureTimeMillis
 
 public interface BotCommandHandler {

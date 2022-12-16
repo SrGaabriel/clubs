@@ -1,14 +1,14 @@
-package dev.gaabriel.clubs.bot.impl
+package io.github.srgaabriel.clubs.bot.impl
 
-import dev.gaabriel.clubs.bot.BotClubsInstance
-import dev.gaabriel.clubs.bot.event.CommandParseEvent
-import dev.gaabriel.clubs.common.exception.CommandParsingException
-import dev.gaabriel.clubs.common.parser.CommandCall
 import io.github.deck.common.log.debug
 import io.github.deck.common.log.info
 import io.github.deck.core.DeckClient
 import io.github.deck.core.event.message.MessageCreateEvent
 import io.github.deck.core.util.sendMessage
+import io.github.srgaabriel.clubs.bot.BotClubsInstance
+import io.github.srgaabriel.clubs.bot.event.CommandParseEvent
+import io.github.srgaabriel.clubs.common.exception.CommandParsingException
+import io.github.srgaabriel.clubs.common.parser.CommandCall
 import kotlinx.coroutines.Job
 import kotlin.system.measureTimeMillis
 
@@ -29,7 +29,13 @@ public class DefaultBotCommandListener(private val clubs: BotClubsInstance): Bot
                 clubs.logger?.debug { "[Clubs] Command call for ${call.root.officialName} parsed in ${parsingTime}ms" }
                 call
             } catch (exception: CommandParsingException) {
-                channel.sendMessage(exception.guildedMessage)
+                val errorMessage = clubs.errorHandler.handle(clubs.dictionary, exception)
+                if (errorMessage == null) {
+                    channel.sendMessage("An unknown error occurred while trying to parse this command attempt.")
+                    exception.printStackTrace()
+                    return@on
+                }
+                channel.sendMessage(errorMessage)
                 return@on
             }
             val event = CommandParseEvent(

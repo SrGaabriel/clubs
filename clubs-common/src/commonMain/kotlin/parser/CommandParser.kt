@@ -1,8 +1,8 @@
-package dev.gaabriel.clubs.common.parser
+package io.github.srgaabriel.clubs.common.parser
 
-import dev.gaabriel.clubs.common.dictionary.ClubsDictionary
-import dev.gaabriel.clubs.common.repository.CommandRepository
 import io.github.reactivecircus.cache4k.Cache
+import io.github.srgaabriel.clubs.common.dictionary.ClubsDictionary
+import io.github.srgaabriel.clubs.common.repository.CommandRepository
 
 public interface CommandParser {
     public var cache: Cache<String, CommandCall>?

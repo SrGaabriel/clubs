@@ -1,4 +1,4 @@
-package dev.gaabriel.clubs.common.struct
+package io.github.srgaabriel.clubs.common.struct
 
 public interface CommandArgument<T : Any> {
     public val name: String?
