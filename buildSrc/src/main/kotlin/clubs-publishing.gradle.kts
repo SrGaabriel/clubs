@@ -29,5 +29,14 @@ publishing {
                 url.set("https://github.com/SrGaabriel/clubs")
             }
         }
+
+        repositories {
+            maven(Library.ReleasesRepository) {
+                credentials {
+                    username = System.getenv("NEXUS_USER")
+                    password = System.getenv("NEXUS_PASSWORD")
+                }
+            }
+        }
     }
 }

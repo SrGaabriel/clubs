@@ -83,22 +83,14 @@ Unfortunately, this module doesn't support specific-platform types, such as `cha
 
 ## Implementation
 
-To use clubs you need to import the ´jitpack` repository
-
-```kotlin
-repositories {
-    maven("https://jitpack.io/")
-}
-```
-
-And add the desired clubs artifact in your dependencies scope 
+To use clubs you just need to add the desired clubs artifact inside your dependencies scope: 
 
 ```kotlin
 dependencies {
-    implementation("com.github.SrGaabriel.clubs:clubs-bot:$clubsVersion")
+    implementation("io.github.srgaabriel.clubs:clubs-bot:$clubsVersion")
 }
 ```
 
-Here you can replace `clubsVersion` with the latest version (`1.3.12`).
+Here you can replace `clubsVersion` with the latest version (`1.3.2`).
 
 If you wish to use the `common` module alone, you can just replace `clubs-bot` with `clubs-common`.

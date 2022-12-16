@@ -34,7 +34,6 @@ tasks {
         val docsJar by registering(Jar::class) {
             group = JavaBasePlugin.DOCUMENTATION_GROUP
             description = "Javadocs"
-            archiveExtension.set("javadoc")
             archiveClassifier.set("javadoc")
         }
 
