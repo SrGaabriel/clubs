@@ -4,9 +4,9 @@
 
 # ♣️ clubs
 
-A simple and versatile command framework to improve command experience in `Guilded` in an elegant way.
+A simple and versatile command framework to improve command experience in `Guilded` elegantly.
 
-The default implementation of the `common` module is `bot`, which uses [deck](https://github.com/SrGaabriel/deck/) to communicate with Guilded's Bot API.
+The default and built-in implementation of the `common` module is `:bot`, which uses [deck](https://github.com/SrGaabriel/deck/) to communicate with Guilded's Bot API.
 
 ## Usage
 
@@ -14,7 +14,7 @@ There's no official documentation, but you can find some examples below.
 
 #### common
 
-This is module containing the main functionalities of the framework, it being the least powerful module:
+This module contains the main functionalities of the framework, being the less powerful than the others:
 
 **(NEW!)** Delegated arguments syntax:
 
@@ -59,7 +59,7 @@ This module doesn't do anything on its own, since it does not have a command han
 
 #### bot
 
-This module is the implementation of clubs to the official Guilded Bot API. You must be in the early access program to be able to use this properly. Usage:
+This module is a clubs implementation that uses the official Guilded Bot API. Usage:
 
 ```kotlin
 val command = command("say") {
@@ -93,4 +93,4 @@ dependencies {
 
 Here you can replace `clubsVersion` with the latest version (`1.4`).
 
-If you wish to use the `common` module alone, you can just replace `clubs-bot` with `clubs-common`.
+**Note:** If you wish to use the `common` module alone, you can just replace `clubs-bot` with `clubs-common`.
