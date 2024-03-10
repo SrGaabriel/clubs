@@ -14,18 +14,15 @@ There's no official documentation, but you can find some examples below.
 
 #### common
 
-This module contains the main functionalities of the framework, being the less powerful than the others:
+This module contains the main functionalities of the framework, being less powerful than the others:
 
 **(NEW!)** Delegated arguments syntax:
 
 ```kotlin
+// Possible patterns of execution: <command> [message] [times] | [times]
 val command = genericCommand("repeat", "repeattask") {
-    // `Message` first, then `times` OR only `times`
     val message by optionalArgument("message", quote())
     val times by requiredArgument("times", integer())
-    // `Times` only or `times` and `message`
-    val times by requiredArgument("times", integer())
-    val message by optionalArgument("message", quote())
     executor {
         repeat(times) { count ->
             send("${message ?: "No message specified."} (x${count+1})")
@@ -55,11 +52,11 @@ val command = genericCommand("repeat", "repeattask") {
 }
 ```
 
-This module doesn't do anything on its own, since it does not have a command handler. In other words, it doesn't have a bridge to send and receive content.
+This module can't operate on its own, since it does not have a command handler. In other words, it doesn't have a bridge to send AND/OR receive content.
 
 #### bot
 
-This module is a clubs implementation that uses the official Guilded Bot API. Usage:
+This module is a Clubs implementation that uses the official Guilded Bot API. Usage:
 
 ```kotlin
 val command = command("say") {
@@ -79,11 +76,11 @@ val command = command("say") {
 
 Example usage: `say "Hello, World!" embed`.
 
-Unfortunately, this module doesn't support specific-platform types, such as `channels`, `users` or `roles`. Because of the early stage of the bot API, these entities can't be parsed as arguments yet.
+Unfortunately, this module doesn't support specific-platform types, such as `channels`, `users` or `roles` due to the early stage of the bot API **(at the time I developed this project)**.
 
 ## Implementation
 
-To use clubs you just need to add the desired clubs artifact inside your dependencies scope: 
+To use clubs you just need to add the desired artifact inside your dependencies scope, for example: 
 
 ```kotlin
 dependencies {
